@@ -15,5 +15,11 @@
  ***************************************************************************/
 package org.formix.dsx;
 
+/**
+ * An marker interface that identify a class as an XML grouping.
+ * 
+ * @author jpgravel
+ *
+ */
 public interface XmlBloc {
 }

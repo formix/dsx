@@ -38,8 +38,22 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
+/**
+ * Define an Xml node in an XML document.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlElement implements XmlContent {
 
+	/**
+	 * Creates a new XmlElement.
+	 * 
+	 * @param name
+	 *            The name of the node to create.
+	 * 
+	 * @return A new XmlElement.
+	 */
 	public static XmlElement create(String name) {
 		return new XmlElement(name);
 	}
@@ -64,6 +78,18 @@ public class XmlElement implements XmlContent {
 		return parser;
 	}
 
+	/**
+	 * Reads an XmlElement from the given file. Every sub child xml content will
+	 * be recurseively created.
+	 * 
+	 * @param file
+	 *            The file containing the XmlElement.
+	 * 
+	 * @return A new XmlElement.
+	 * 
+	 * @throws XmlException
+	 *             If there is any problem during Xml parsing.
+	 */
 	public static XmlElement readXML(File file) throws XmlException {
 		try {
 			Reader reader = new FileReader(file);
@@ -77,6 +103,18 @@ public class XmlElement implements XmlContent {
 		}
 	}
 
+	/**
+	 * Reads an XmlElement from the given reader. Every sub child xml content
+	 * will be recurseively created.
+	 * 
+	 * @param reader
+	 *            The reader containing the XmlElement.
+	 * 
+	 * @return A new XmlElement.
+	 * 
+	 * @throws XmlException
+	 *             If there is any problem during Xml parsing.
+	 */
 	public static XmlElement readXML(Reader reader) throws XmlException {
 		return readXML(reader, new XmlContentAdapter());
 	}
@@ -296,7 +334,7 @@ public class XmlElement implements XmlContent {
 	@Override
 	public long getId() {
 		if (this.id == -1) {
-			this.id = IdGen.nextId();
+			this.id = SUID.nextId();
 		}
 		return this.id;
 	}

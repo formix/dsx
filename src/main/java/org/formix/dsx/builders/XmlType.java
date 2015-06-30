@@ -24,10 +24,7 @@ import java.lang.annotation.Target;
 public @interface XmlType {
 
 	/**
-	 * @return the namespace for primitive data types see {@link http
-	 *         ://www.w3.org
-	 *         /TR/2012/REC-xmlschema11-2-20120405/datatypes.html#built
-	 *         -in-primitive-datatypes}
+	 * @return the namespace for primitive data types see http://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/datatypes.html#built-in-primitive-datatypes
 	 * 
 	 */
 	String valueNameSpace() default "http://www.w3.org/2001/XMLSchema";

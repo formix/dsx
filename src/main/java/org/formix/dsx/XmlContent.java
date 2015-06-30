@@ -18,8 +18,39 @@ package org.formix.dsx;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Defines the methods found in all XML classes.
+ * 
+ * @author jpgravel
+ *
+ */
 public interface XmlContent extends XmlBloc {
+
+	/**
+	 * Method transforming the current class into its XML string representation.
+	 * 
+	 * @return an XML string representation of itself.
+	 */
 	public String toXml();
-	public void write(Writer writer)  throws IOException;
+
+	/**
+	 * Method defining how the current class will write itself as XML to the
+	 * given writer.
+	 * 
+	 * @param writer
+	 *            Thw writer to write to.
+	 * 
+	 * @throws IOException
+	 *             Thrown if an error occurs while writing to the writer.
+	 */
+	public void write(Writer writer) throws IOException;
+
+	/**
+	 * Gets the Id of the current node. This id has no representation in the
+	 * given XML but is useful to uniquely identify each XML node within an XML
+	 * graph.
+	 * 
+	 * @return The Id of the current XML content.
+	 */
 	public long getId();
 }

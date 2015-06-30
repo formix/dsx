@@ -15,6 +15,13 @@
  ***************************************************************************/
 package org.formix.dsx;
 
+/**
+ * An Adapter with an empty implementation for each of XmlContentListener
+ * methods.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlContentAdapter implements XmlContentListener {
 
 	@Override

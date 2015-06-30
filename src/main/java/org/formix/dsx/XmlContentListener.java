@@ -15,14 +15,44 @@
  ***************************************************************************/
 package org.formix.dsx;
 
+/**
+ * An interface used to define hooks while xml is read.
+ * 
+ * @author jpgravel
+ *
+ */
 public interface XmlContentListener {
 
+	/**
+	 * Called after an XmlCDATA content is created.
+	 * 
+	 * @param cdata
+	 *            The XmlCDATA content that have just been created.
+	 */
 	void cdataCreated(XmlCDATA cdata);
 
+	/**
+	 * Called after an XmlElement content is created.
+	 * 
+	 * @param element
+	 *            The XmlElement content that have just been created.
+	 */
 	void elementCreated(XmlElement element);
 
+	/**
+	 * Called after an XmlText content is created.
+	 * 
+	 * @param text
+	 *            The XmlText content that have just been created.
+	 */
 	void textCreated(XmlText text);
 
+	/**
+	 * Called after an XmlComment content is created.
+	 * 
+	 * @param comment
+	 *            The XmlComment content that have just been created.
+	 */
 	void commentCreated(XmlComment comment);
 
 }

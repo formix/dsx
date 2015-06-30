@@ -15,6 +15,13 @@
  ***************************************************************************/
 package org.formix.dsx;
 
+
+/**
+ * Tells for which document type an XML document instance is running.
+ * 
+ * @author jpgravel
+ *
+ */
 public enum DocumentType {
 	XHTML,
 	XML_1_0,

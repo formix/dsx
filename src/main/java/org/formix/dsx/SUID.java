@@ -17,8 +17,14 @@ package org.formix.dsx;
 
 import java.util.Random;
 
-final class IdGen {
-	
+/**
+ * Sufficiently Unique Identifier
+ * 
+ * @author jpgravel
+ *
+ */
+final class SUID {
+
 	private static final int SHORT_MAX = 65536;
 
 	private static int counter;
@@ -28,9 +34,16 @@ final class IdGen {
 		counter = rnd.nextInt(SHORT_MAX);
 	}
 
-	private IdGen() {
+	private SUID() {
 	}
 
+	/**
+	 * Creates a unique ID by aggregating the current time and using a 16 bits
+	 * counter. The counter is initialized at a random number. This generator
+	 * can create up to 65536 different id per millisecond.
+	 * 
+	 * @return a new id.
+	 */
 	public static synchronized long nextId() {
 		long id = (System.currentTimeMillis() << 16) | counter;
 		counter = (counter + 1) % SHORT_MAX;

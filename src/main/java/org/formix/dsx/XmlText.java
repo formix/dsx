@@ -33,7 +33,7 @@ public class XmlText implements XmlContent {
 	@Override
 	public long getId() {
 		if (this.id == -1) {
-			this.id = IdGen.nextId();
+			this.id = SUID.nextId();
 		}
 		return this.id;
 	}

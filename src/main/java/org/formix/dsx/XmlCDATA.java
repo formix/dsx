@@ -18,8 +18,19 @@ package org.formix.dsx;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Defines a CDATA xml chunk.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlCDATA extends XmlText {
 
+	/**
+	 * Creates a CDATA section with the given text.
+	 * 
+	 * @param text The text to put in the CDATA section.
+	 */
 	public XmlCDATA(String text) {
 		super(text);
 	}

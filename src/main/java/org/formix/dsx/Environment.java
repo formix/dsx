@@ -15,12 +15,22 @@
  ***************************************************************************/
 package org.formix.dsx;
 
+
+/**
+ * 
+ * Defines environment variables.
+ * 
+ * @author jpgravel
+ *
+ */
 public final class Environment {
 
+	/**
+	 * The new line character(s) for the current system.
+	 */
 	public final static String NEWLINE = System.getProperty("line.separator"); 
 	
 	private Environment() {
 	}
 
-	
 }

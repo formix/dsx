@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Represents an XML document with the XML header.
+ * 
  * @author jpgravel
  * 
  */
@@ -69,35 +71,82 @@ public class XmlDocument implements XmlBloc {
 	private XmlElement root;
 	private DocumentType documentType;
 
+	/**
+	 * Creates an instance of XmlDocument version 1.1
+	 */
 	public XmlDocument() {
 		this(null, DocumentType.XML_1_1);
 	}
 
+	/**
+	 * Creates an instance of XmlDocument version 1.1, using the given root.
+	 * 
+	 * @param root
+	 *            The root element used for the document.
+	 */
 	public XmlDocument(XmlElement root) {
 		this(root, DocumentType.XML_1_1);
 	}
 
+	/**
+	 * Creates an instance of XmlDocument with the given doctype.
+	 * 
+	 * @param doctype
+	 *            The document type of the created XmlDocument.
+	 */
 	public XmlDocument(DocumentType doctype) {
 		this(null, doctype);
 	}
 
+	/**
+	 * Creates an instance of XmlDocument with the given root element and
+	 * doctype.
+	 * 
+	 * @param root
+	 *            The root element used for the document.
+	 * 
+	 * @param doctype
+	 *            The document type of the created XmlDocument.
+	 */
 	public XmlDocument(XmlElement root, DocumentType doctype) {
 		this.root = root;
 		this.documentType = doctype;
 	}
 
+	/**
+	 * Gets the root XmlElement.
+	 * 
+	 * @return the root XmlElement.
+	 */
 	public XmlElement getRoot() {
 		return root;
 	}
 
+	/**
+	 * Sets the root XmlElement.
+	 * 
+	 * @param root
+	 *            the root XmlElement.
+	 */
 	public void setRoot(XmlElement root) {
 		this.root = root;
 	}
 
+	/**
+	 * Gets the DocumentType.
+	 * 
+	 * @return the DocumentType.
+	 */
 	public DocumentType getDocumentType() {
 		return documentType;
 	}
 
+	/**
+	 * Sets the DocumentType.
+	 * 
+	 * @param documentType
+	 *            The DocumentType.
+	 */
 	public void setDocumentType(DocumentType documentType) {
 		this.documentType = documentType;
 	}
@@ -133,7 +182,7 @@ public class XmlDocument implements XmlBloc {
 	 * current system and two white spaces as indentation.
 	 */
 	public void format() {
-		this.format(System.getProperty("line.separator"), "  ");
+		this.format(Environment.NEWLINE, "  ");
 	}
 
 	/**
@@ -220,7 +269,8 @@ public class XmlDocument implements XmlBloc {
 		if (!(o instanceof XmlDocument))
 			return false;
 		XmlDocument other = (XmlDocument) o;
-		return this.root.deepEquals(other.root);
+		return this.documentType.equals(other.documentType)
+				&& this.root.deepEquals(other.root);
 	}
 
 	/**
@@ -230,7 +280,10 @@ public class XmlDocument implements XmlBloc {
 	 *            the source file containing the xml data.
 	 * 
 	 * @throws XmlException
+	 *             If a problem with XML is encountered.
+	 * 
 	 * @throws IOException
+	 *             If some file reading problem is encountered.
 	 */
 	public void load(File source) throws IOException, XmlException {
 		Reader reader = new FileReader(source);
@@ -247,8 +300,11 @@ public class XmlDocument implements XmlBloc {
 	 * @param reader
 	 *            The reader containing the xml data.
 	 * 
-	 * @throws IOException
 	 * @throws XmlException
+	 *             If a problem with XML is encountered.
+	 * 
+	 * @throws IOException
+	 *             If some reading problem is encountered.
 	 */
 	public void load(Reader reader) throws IOException, XmlException {
 		this.load(reader, new XmlContentAdapter());
@@ -269,19 +325,20 @@ public class XmlDocument implements XmlBloc {
 	 * </p>
 	 * 
 	 * <pre>
-	 * {@code
-	 *     XmlDocument htmldoc = new XmlDocument(DocumentType.XHTML);
-	 *     final Map<String, XmlElement> index = new HashMap<String, XmlElement>();
-	 *     XmlContentAdapter adapter = new XmlContentAdapter() {
-	 *         @Override
-	 *         public void elementCreated(XmlElement element) {
-	 *             Map<String, String> attributes = element.getAttributes();
-	 *             if (attributes.containsKey("id")) {
-	 *                 index.put(attributes.get("id"), element);
-	 *             }
-	 *         }
-	 *     };
-	 *     htmldoc.load(reader, adapter);
+	 * {
+	 * 	&#064;code
+	 * 	XmlDocument htmldoc = new XmlDocument(DocumentType.XHTML);
+	 * 	final Map&lt;String, XmlElement&gt; index = new HashMap&lt;String, XmlElement&gt;();
+	 * 	XmlContentAdapter adapter = new XmlContentAdapter() {
+	 * 		&#064;Override
+	 * 		public void elementCreated(XmlElement element) {
+	 * 			Map&lt;String, String&gt; attributes = element.getAttributes();
+	 * 			if (attributes.containsKey(&quot;id&quot;)) {
+	 * 				index.put(attributes.get(&quot;id&quot;), element);
+	 * 			}
+	 * 		}
+	 * 	};
+	 * 	htmldoc.load(reader, adapter);
 	 * }
 	 * </pre>
 	 * 
@@ -292,8 +349,11 @@ public class XmlDocument implements XmlBloc {
 	 *            A XmlContentListener used to get insights while the document
 	 *            is loading.
 	 * 
-	 * @throws IOException
 	 * @throws XmlException
+	 *             If a problem with XML is encountered.
+	 * 
+	 * @throws IOException
+	 *             If some reading problem is encountered.
 	 */
 	public void load(Reader reader, XmlContentListener listener)
 			throws IOException, XmlException {
@@ -307,6 +367,7 @@ public class XmlDocument implements XmlBloc {
 	 *            The file where the xml document will be saved.
 	 * 
 	 * @throws IOException
+	 *             If some problems occurs while saving XML to the file.
 	 */
 	public void save(File target) throws IOException {
 
@@ -336,12 +397,11 @@ public class XmlDocument implements XmlBloc {
 			pw.flush();
 		}
 	}
-	
-	
+
 	public void save(OutputStream out) {
-		this.save(new OutputStreamWriter(out, Charset.availableCharsets().get("UTF-8")));
+		this.save(new OutputStreamWriter(out, Charset.availableCharsets().get(
+				"UTF-8")));
 	}
-	
 
 	/**
 	 * Creates a map between any XmlContent and it's parent XmlElement. The link

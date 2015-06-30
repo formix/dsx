@@ -18,8 +18,20 @@ package org.formix.dsx;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * Defines a comment xml chunk.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlComment extends XmlText {
 
+	/**
+	 * Creates an XmlComment section using the given text.
+	 * 
+	 * @param text
+	 *            The text to put in the comment.
+	 */
 	public XmlComment(String text) {
 		super(text);
 	}
