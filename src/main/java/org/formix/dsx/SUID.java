@@ -38,9 +38,10 @@ final class SUID {
 	}
 
 	/**
-	 * Creates a unique ID by aggregating the current time and using a 16 bits
-	 * counter. The counter is initialized at a random number. This generator
-	 * can create up to 65536 different id per millisecond.
+	 * Creates a unique 64 bits ID by aggregating the current time in
+	 * milliseconds since epoch (Jan. 1, 1970) and using a 16 bits counter. The
+	 * counter is initialized at a random number. This generator can create up
+	 * to 65536 different id per millisecond.
 	 * 
 	 * @return a new id.
 	 */
