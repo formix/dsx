@@ -95,7 +95,7 @@ public class TestXmlElement {
 	public void testReaderHugeDoc() throws Exception {
 		System.setProperty("entityExpansionLimit", "5000000");
 		XmlElement elem = XmlElement.readXML(new File("hugedoc.xhtml"));
-		System.out.println("Nombre d'Ã©lÃ©ments au total: "
+		System.out.println("Nombre d'éléments au total: "
 				+ this.countChildElements(elem));
 	}
 
