@@ -386,7 +386,7 @@ public class XmlDocument implements XmlBloc {
 	public void save(Writer writer) {
 		PrintWriter pw = new PrintWriter(writer);
 		if (this.documentType == DocumentType.XHTML) {
-			pw.println("<!DOCTYPE html>");
+			pw.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
 		} else if (this.documentType == DocumentType.XML_1_0) {
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		} else if (this.documentType == DocumentType.XML_1_1) {
