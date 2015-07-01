@@ -72,20 +72,20 @@ public class XmlDocument implements XmlBloc {
 	private DocumentType documentType;
 
 	/**
-	 * Creates an instance of XmlDocument version 1.1
+	 * Creates an instance of XmlDocument version 1.0
 	 */
 	public XmlDocument() {
-		this(null, DocumentType.XML_1_1);
+		this(null, DocumentType.XML_1_0);
 	}
 
 	/**
-	 * Creates an instance of XmlDocument version 1.1, using the given root.
+	 * Creates an instance of XmlDocument version 1.0, using the given root.
 	 * 
 	 * @param root
 	 *            The root element used for the document.
 	 */
 	public XmlDocument(XmlElement root) {
-		this(root, DocumentType.XML_1_1);
+		this(root, DocumentType.XML_1_0);
 	}
 
 	/**
@@ -257,9 +257,13 @@ public class XmlDocument implements XmlBloc {
 
 	@Override
 	public String toString() {
-		StringWriter sw = new StringWriter();
-		this.save(sw);
-		return sw.toString();
+		try {
+			StringWriter sw = new StringWriter();
+			this.save(sw);
+			return sw.toString();
+		} catch (IOException ex) {
+			return null;
+		}
 	}
 
 	@Override
@@ -370,7 +374,6 @@ public class XmlDocument implements XmlBloc {
 	 *             If some problems occurs while saving XML to the file.
 	 */
 	public void save(File target) throws IOException {
-
 		OutputStreamWriter writer = new OutputStreamWriter(
 				new FileOutputStream(target), "UTF-8");
 		this.save(writer);
@@ -382,10 +385,14 @@ public class XmlDocument implements XmlBloc {
 	 * 
 	 * @param writer
 	 *            The writer used to save the xml document.
+	 * 
+	 * @throws IOException
+	 *             If an issue happens while writing to the writer.
 	 */
-	public void save(Writer writer) {
+	public void save(Writer writer) throws IOException {
 		PrintWriter pw = new PrintWriter(writer);
 		if (this.documentType == DocumentType.XHTML) {
+			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			pw.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
 		} else if (this.documentType == DocumentType.XML_1_0) {
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -393,12 +400,22 @@ public class XmlDocument implements XmlBloc {
 			pw.println("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
 		}
 		if (root != null) {
-			pw.print(this.root.toXml());
+			this.root.write(writer);
 			pw.flush();
 		}
 	}
 
-	public void save(OutputStream out) {
+	/**
+	 * Saves the current document to the given output stream. The XML will be
+	 * written in UTF8.
+	 * 
+	 * @param out
+	 *            The output stream to write to.
+	 * 
+	 * @throws IOException
+	 *             If an error occurs while saving.
+	 */
+	public void save(OutputStream out) throws IOException {
 		this.save(new OutputStreamWriter(out, Charset.availableCharsets().get(
 				"UTF-8")));
 	}
