@@ -73,5 +73,15 @@ public class XmlNavigatorTests {
 		Assert.assertFalse(xnav2.exists("/BOB"));
 		
 	}
+	
+	
+	@Test
+	public void testGetAttributeText() throws Exception {
+		String xml = "<root><item><child name=\"test\"/></item></root>";
+		XmlElement root = XmlElement.readXML(xml);
+		XmlNavigator xnav = new XmlNavigator(root);
+		String name = xnav.getText("/item/child@name");
+		Assert.assertEquals("test", name);
+	}
 
 }

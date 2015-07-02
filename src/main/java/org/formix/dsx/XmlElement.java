@@ -119,6 +119,23 @@ public class XmlElement implements XmlContent {
 		return readXML(reader, new XmlContentAdapter());
 	}
 
+	/**
+	 * Read XML from the given reader and fire events from the provided
+	 * listener.
+	 * 
+	 * @param reader
+	 *            The reader containing the XML data.
+	 * 
+	 * @param listener
+	 *            The XmlContentListener containing code to be notified each
+	 *            time an Xml content object is created.
+	 * 
+	 * @return The XmsElement created by parsing the given reader data.
+	 * 
+	 * @throws XmlException
+	 *             Thrown if a problem occur while reading the provided XML
+	 *             data.
+	 */
 	public static XmlElement readXML(Reader reader, XmlContentListener listener)
 			throws XmlException {
 		XmlHandler handler = new XmlHandler(listener);
@@ -142,6 +159,18 @@ public class XmlElement implements XmlContent {
 		}
 	}
 
+	/**
+	 * Parse the given xml string into an XmlElement.
+	 * 
+	 * @param xml
+	 *            The XML string to parse.
+	 * 
+	 * @return The XmlElement parsed from the given XML string.
+	 * 
+	 * @throws XmlException
+	 *             Thrown if a problem occur while reading the provided XML
+	 *             data.
+	 */
 	public static XmlElement readXML(String xml) throws XmlException {
 		try {
 			Reader reader = new StringReader(xml);
@@ -159,6 +188,12 @@ public class XmlElement implements XmlContent {
 	private long id;
 	private String name;
 
+	/**
+	 * Creates an XmlElement instance with the given name.
+	 * 
+	 * @param name
+	 *            The name given to the XmlElement.
+	 */
 	public XmlElement(String name) {
 		this.setName(name);
 		this.attributes = new LinkedHashMap<String, String>();
@@ -166,33 +201,90 @@ public class XmlElement implements XmlContent {
 		this.id = -1;
 	}
 
-	public void addAttribute(String name, String value) {
+	/**
+	 * Adds an attribute to the current XmlElement.
+	 * 
+	 * @param name
+	 *            The name of the attribute.
+	 * 
+	 * @param value
+	 *            The value of the attribute.
+	 * 
+	 * @return The current XmlElement instance for method chaining.
+	 * 
+	 * @deprecated This method is deprecated. Use {@code setAttribute} method
+	 *             instead.
+	 */
+	@Deprecated
+	public XmlElement addAttribute(String name, String value) {
 		this.attributes.put(name, value);
+		return this;
 	}
 
+	/**
+	 * Adds a new XmlCDATA text to the current XmlElement.
+	 * 
+	 * @param text
+	 *            The CDATA text.
+	 * 
+	 * @return The XmlCDATA instance added to the current XmlElement.
+	 */
 	public XmlCDATA addCDATA(String text) {
 		XmlCDATA cdata = new XmlCDATA(text);
 		this.addChild(cdata);
 		return cdata;
 	}
 
+	/**
+	 * Adds the given XmlContent to the current to the current XmlElement
+	 * instance.
+	 * 
+	 * @param child
+	 *            The child XmlContent to add.
+	 * 
+	 * @return The current XmlElement instance for method chaining.
+	 */
 	public XmlElement addChild(XmlContent child) {
 		this.childs.add(child);
 		return this;
 	}
 
+	/**
+	 * Adds a new XmlComment to the current XmlElement.
+	 * 
+	 * @param text
+	 *            The text of the XmlComment.
+	 * 
+	 * @return The newly created XmlComment.
+	 */
 	public XmlComment addComment(String text) {
 		XmlComment comment = new XmlComment(text);
 		this.addChild(comment);
 		return comment;
 	}
 
+	/**
+	 * Adds a new XmlElement to the current XmlElement.
+	 * 
+	 * @param name
+	 *            The name of the XmlElement.
+	 * 
+	 * @return The newly created XmlElement.
+	 */
 	public XmlElement addElement(String name) {
 		XmlElement element = new XmlElement(name);
 		this.addChild(element);
 		return element;
 	}
 
+	/**
+	 * Adds a new XmlText content to the current XmlElement.
+	 * 
+	 * @param text
+	 *            The text of the XmlText.
+	 * 
+	 * @return The newly created XmlText.
+	 */
 	public XmlText addText(String text) {
 		XmlText txt = new XmlText(text);
 		this.addChild(txt);
@@ -271,39 +363,125 @@ public class XmlElement implements XmlContent {
 		return true;
 	}
 
+	/**
+	 * Tells if the given attribute name exists in the current XmlElement.
+	 * 
+	 * @param name
+	 *            The name of the seeked attribute.
+	 * 
+	 * @return True if the current XmlElement has the named attribute, false
+	 *         otherwise.
+	 */
 	public boolean hasAttribute(String name) {
 		return this.attributes.containsKey(name);
 	}
 
+	/**
+	 * Gets the named attribute value.
+	 * 
+	 * @param name
+	 *            The name of the desired attribute.
+	 * 
+	 * @return The value of the named attribute or null if the attribute does
+	 *         not exists for the current XmlElement.
+	 */
 	public String getAttribute(String name) {
 		return this.attributes.get(name);
 	}
 
+	/**
+	 * Gets the attribute map of the current XmlElement.
+	 * 
+	 * @return A Map<String, String> containing all attributes of this
+	 *         XmlElement.
+	 */
 	public Map<String, String> getAttributes() {
 		return this.attributes;
 	}
 
+	/**
+	 * Gets the child XmlContent at the given index of the current XmlElement.
+	 * 
+	 * @param index
+	 *            The index of the child to get.
+	 * 
+	 * @return The child XmlContent at index.
+	 * 
+	 * @throws IndexOutOfBoundsException
+	 *             if the index is out of range.
+	 */
 	public XmlContent getChild(int index) {
 		return this.childs.get(index);
 	}
 
+	/**
+	 * Gets this XmlContent instance child list.
+	 * 
+	 * @return This XmlContent child list.
+	 */
 	public List<XmlContent> getChilds() {
 		return this.childs;
 	}
 
+	/**
+	 * Concatenate all child's XmlContent.toString() trimmed and separated by a
+	 * single space of the named XmlElement.
+	 * <p>
+	 * for example:<br>
+	 * given the following XML hierarchy: - root - child - "string value"
+	 * </p>
+	 * <p>
+	 * Executing:<br>
+	 * root.getValue("child")<br>
+	 * </p>
+	 * <p>
+	 * Will return:<br>
+	 * "string value"
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            The name of the child element for which we want the inner
+	 *            value.
+	 * 
+	 * @return The content of the named child element.
+	 */
 	public String getValue(String elementName) {
 		StringBuilder sb = new StringBuilder();
 		List<XmlContent> grandChilds = this.getElement(elementName).getChilds();
 		for (XmlContent xmlContent : grandChilds) {
-			sb.append(xmlContent.toString());
+			if (sb.length() > 0) {
+				sb.append(' ');
+			}
+			sb.append(xmlContent.toString().trim());
 		}
 		return sb.toString();
 	}
 
+	/**
+	 * Return the first occurence of the named child XmlElement.
+	 * 
+	 * @param name
+	 *            The name of the desired child element.
+	 * 
+	 * @return The named element or null if there is no such child XmlElement.
+	 */
 	public XmlElement getElement(String name) {
 		return this.getElement(name, 0);
 	}
 
+	/**
+	 * Gets the named child element at the given index.
+	 * 
+	 * @param name
+	 *            The name of the child XmlElement desired.
+	 * 
+	 * @param index
+	 *            The index of the desired XmlElement.
+	 * 
+	 * @return The child XmlElement corresponding to the given name at the given
+	 *         index or null if no element is fount at this index.
+	 * 
+	 */
 	public XmlElement getElement(String name, int index) {
 		int counter = 0;
 		for (XmlContent child : this.childs) {
@@ -319,6 +497,14 @@ public class XmlElement implements XmlContent {
 		return null;
 	}
 
+	/**
+	 * Returns all child XmlElement having the given name.
+	 * 
+	 * @param name
+	 *            The name of the desired child XmlElements
+	 * 
+	 * @return A List of child XmlElement.
+	 */
 	public List<XmlElement> getElements(String name) {
 		ArrayList<XmlElement> elements = new ArrayList<XmlElement>();
 		for (XmlContent child : this.childs) {
@@ -339,15 +525,38 @@ public class XmlElement implements XmlContent {
 		return this.id;
 	}
 
+	/**
+	 * Gets the name of the current XmlElement.
+	 * 
+	 * @return the name of the current XmlElement.
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Sets a value to the given attribute.
+	 * 
+	 * @param name
+	 *            The name of the attribute.
+	 * 
+	 * @param value
+	 *            The value of the attribute.
+	 * 
+	 * @return The current XmlElement instance for method chaining.
+	 * 
+	 */
 	public XmlElement setAttribute(String name, String value) {
 		this.attributes.put(name, value);
 		return this;
 	}
 
+	/**
+	 * Sets the name of the current element.
+	 * 
+	 * @param name
+	 *            The new name of the current attribute.
+	 */
 	public void setName(String name) {
 		if (name.matches(".*\\s.*"))
 			throw new IllegalArgumentException(
