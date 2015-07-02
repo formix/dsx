@@ -26,13 +26,8 @@ import java.util.Random;
 final class SUID {
 
 	private static final int SHORT_MAX = 65536;
-
-	private static int counter;
-
-	static {
-		Random rnd = new Random();
-		counter = rnd.nextInt(SHORT_MAX);
-	}
+	
+	private static int counter = -1;
 
 	private SUID() {
 	}
@@ -46,7 +41,13 @@ final class SUID {
 	 * @return a new id.
 	 */
 	public static synchronized long nextId() {
-		long id = (System.currentTimeMillis() << 16) | counter;
+		long now = System.currentTimeMillis();
+		if (counter == -1) {
+			long seed = now ^ Thread.currentThread().getId(); 
+			Random rnd = new Random(Long.hashCode(seed));
+			counter = rnd.nextInt(SHORT_MAX);
+		}
+		long id = (now << 16) | counter;
 		counter = (counter + 1) % SHORT_MAX;
 		return id;
 	}
