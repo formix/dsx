@@ -44,7 +44,7 @@ public class TestXmlDocument {
 		XmlDocument doc = new XmlDocument(elem);
 		doc.cleanUp();
 
-		final String expected = "<?xml version=\"1.1\" encoding=\"UTF-8\"?>" + EOL
+		final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + EOL
 				+ "<test><name>Jean-Philippe</name></test>";
 
 		Assert.assertEquals(expected, doc.toString());

@@ -15,22 +15,52 @@
  ***************************************************************************/
 package org.formix.dsx;
 
+/**
+ * Exception thrown when a problem occurs during XML parsing.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlException extends Exception {
 
 	private static final long serialVersionUID = -6047208130709180926L;
 
+	/**
+	 * Creates an instance of XmlException.
+	 */
 	public XmlException() {
 		super();
 	}
 
+	/**
+	 * Creates an instance of XmlException with the given message.
+	 * 
+	 * @param message
+	 *            The message associated to the current exception.
+	 */
 	public XmlException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Creates an instance of XmlException with the given cause.
+	 * 
+	 * @param cause
+	 *            The causs of the current exception.
+	 */
 	public XmlException(Throwable cause) {
 		super(cause);
 	}
 
+	/**
+	 * Creates an instance of XmlException with the given message and cause.
+	 * 
+	 * @param message
+	 *            The message associated to the current exception.
+	 *            
+	 * @param cause
+	 *            The causs of the current exception.
+	 */
 	public XmlException(String message, Throwable cause) {
 		super(message, cause);
 	}

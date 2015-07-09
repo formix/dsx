@@ -50,7 +50,7 @@ class XmlHandler extends DefaultHandler2 {
 		for (int i = 0; i < attributes.getLength(); i++) {
 			String name = attributes.getQName(i);
 			String value = attributes.getValue(i);
-			newElement.addAttribute(name, value);
+			newElement.setAttribute(name, value);
 		}
 		this.elementStack.add(newElement);
 		this.listener.elementCreated(newElement);

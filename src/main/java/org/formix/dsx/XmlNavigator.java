@@ -1,12 +1,54 @@
 package org.formix.dsx;
 
+import java.util.Collections;
+import java.util.LinkedList;
+
 import org.formix.dsx.XmlContent;
 import org.formix.dsx.XmlElement;
 
+/**
+ * Helps navigate through XML hierarchy using a simple XPath like syntax.
+ * 
+ * The root element name is always omitted. For example, if you create an
+ * XmlNavigator with the following XmlElement as root:
+ * 
+ * <code>
+ *   <root>
+ *     <child>Hello</child>
+ *   </root>   
+ * </code>
+ *
+ * the following code will return the "Hello" value:
+ * 
+ * <code>
+ * XmlNavigator xnav = new XmlNavigator(root);
+ * xnav.getText("/child"); // will return "hello" 
+ * </code>
+ * 
+ * An XmlNavigator never throw exception if a node specified in the path does
+ * not exists. If it's the case, it will return the value null which may be
+ * confused with the possibility the the node is an empty xml element, i.e.:
+ * <code><empty/></code>. To distinguish this case, use the {@code exists}
+ * method.
+ * 
+ * To get a node attribute value, use the following syntax:
+ * 
+ * <code>
+ *   xnav.getText("/child/subItem@attributeName");
+ * </code>
+ * 
+ * The previous code will return the text from the attribute named
+ * "attributeName" of the "subItem" node. Once again, to distinguish the
+ * standalone attribute and an inexisting attribute, use the {@code exists}
+ * method.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlNavigator {
 
 	private XmlElement root;
-	
+
 	public XmlNavigator(XmlElement root) {
 		this.root = root;
 	}
@@ -14,68 +56,67 @@ public class XmlNavigator {
 	public XmlElement getRoot() {
 		return root;
 	}
-	
+
 	public String getText(String path) {
 
-		if (path.lastIndexOf('@') != -1) {
-			return this.getAttribute(path);
+		String localPath = path;
+
+		String attributeName = this.getAttributeName(path);
+		if (attributeName != null) {
+			localPath = path.substring(0,
+					path.length() - attributeName.length() - 1);
 		}
-		
-		XmlElement curr = this.getElement(path);
-		if (curr == null){
+
+		XmlElement elem = this.getElement(localPath);
+		if (elem == null) {
 			return null;
 		}
-		
-		StringBuilder sb = new StringBuilder();
-		for (XmlContent xmlContent : curr.getChilds()) {
-			sb.append(xmlContent.toString());
+
+		if (attributeName != null) {
+			return elem.getAttribute(attributeName);
 		}
+
+		StringBuilder sb = new StringBuilder();
+		for (XmlContent xmlContent : elem.getChilds()) {
+			if (sb.length() > 0) {
+				sb.append(' ');
+			}
+			if (!(xmlContent instanceof XmlComment)) {
+				sb.append(xmlContent.toString().trim());
+			}
+		}
+
 		return sb.toString().trim();
 	}
-	
-	private String getAttribute(String path) {
-		
-		int lastSeparatorIndex = path.lastIndexOf('/');
 
-		String newPath = path.substring(0, lastSeparatorIndex);
-		XmlElement curr = this.getElement(newPath);
-		if (curr == null){
+	private String getAttributeName(String path) {
+		int lastSlash = path.lastIndexOf("/");
+		int arobasIndex = path.indexOf('@', lastSlash);
+		if (arobasIndex == -1) {
 			return null;
 		}
-		
-		String attributeName = path.substring(lastSeparatorIndex + 2);
-		if (curr.getAttributes().containsKey(attributeName)) {
-			String attributeValue = curr.getAttribute(attributeName);
-			if (attributeValue == null) {
-				attributeValue = "";
-			}
-			return attributeValue;
-		}
-		
-		return null;
+		return path.substring(arobasIndex + 1);
 	}
 
 	public XmlElement getElement(String path) {
-		XmlElement curr = null;
-
-		if (root != null) {
-			String[] elemNames = path.split("/");
-			for (String elemName : elemNames) {
-				if (elemName.equals("")) {
-					curr = root;
-				} else {
-					XmlElement child = curr.getElement(elemName);
-					if (child == null) {
-						return null;
-					}
-					curr = child;
-				}
-			}
+		if (root == null) {
+			return null;
 		}
-		
+		LinkedList<String> names = new LinkedList<String>();
+		Collections.addAll(names, path.split("/"));
+		XmlElement curr = this.root;
+		names.poll(); // removes the root empty name
+		String name = names.poll();
+		while (name != null) {
+			if (curr == null) {
+				return null;
+			}
+			curr = curr.getElement(name);
+			name = names.poll();
+		}
 		return curr;
 	}
-	
+
 	public boolean exists(String path) {
 		return getElement(path) != null;
 	}
