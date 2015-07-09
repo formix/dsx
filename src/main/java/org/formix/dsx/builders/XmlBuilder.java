@@ -2,6 +2,7 @@ package org.formix.dsx.builders;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,7 +31,7 @@ public class XmlBuilder {
 	private Map<String, String> nameSpaces;
 
 	public XmlBuilder() {
-		DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
+		DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SXXX");
 		this.nameSpaces = new LinkedHashMap<String, String>();
 	}
 
@@ -181,7 +182,13 @@ public class XmlBuilder {
 						.valueNameSpace());
 				prefix = reference + ":";
 			}
-			return prefix + childType.getSimpleName().toLowerCase();
+			String typeName = childType.getSimpleName().toLowerCase();
+			if (typeName.equals("bigdecimal")) {
+				typeName = "decimal";
+			} else if (typeName.equals("date") || typeName.equals("calendar")) { 
+				typeName = "dateTime";
+			}
+			return prefix + typeName;
 		} else {
 			String prefix = "";
 			String reference = this.getNameSpaceReference(childType);
