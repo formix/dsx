@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.formix.dsx.XmlComment;
 import org.formix.dsx.XmlContent;
 import org.formix.dsx.XmlElement;
@@ -25,13 +26,13 @@ public class XmlBuilder {
 
 	public static final String XSI = "http://www.w3.org/2001/XMLSchema-instance";
 	public static final String XS = "http://www.w3.org/2001/XMLSchema";
-	
+
 	private final SimpleDateFormat DATE_FORMAT;
 
 	private Map<String, String> nameSpaces;
 
 	public XmlBuilder() {
-		DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SXXX");
+		DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
 		this.nameSpaces = new LinkedHashMap<String, String>();
 	}
 
@@ -124,9 +125,10 @@ public class XmlBuilder {
 					}
 					root.addChild(child);
 				}
-				
+
 			} else {
-				XmlExplicitNull explicitNull = method.getAnnotation(XmlExplicitNull.class);
+				XmlExplicitNull explicitNull = method
+						.getAnnotation(XmlExplicitNull.class);
 				if (explicitNull != null) {
 					XmlElement child = new XmlElement(childName);
 					String ns = this.getNameSpaceReference(XSI);
@@ -185,7 +187,7 @@ public class XmlBuilder {
 			String typeName = childType.getSimpleName().toLowerCase();
 			if (typeName.equals("bigdecimal")) {
 				typeName = "decimal";
-			} else if (typeName.equals("date") || typeName.equals("calendar")) { 
+			} else if (typeName.equals("date") || typeName.equals("calendar")) {
 				typeName = "dateTime";
 			}
 			return prefix + typeName;
@@ -225,13 +227,38 @@ public class XmlBuilder {
 			return null;
 		}
 		if (Date.class.isAssignableFrom(type)) {
-			return new XmlText(DATE_FORMAT.format((Date) obj));
+			return new XmlText(formatDate((Date) obj));
 		} else if (Calendar.class.isAssignableFrom(type)) {
 			Calendar calendar = (Calendar) obj;
-			return new XmlText(DATE_FORMAT.format(calendar.getTime()));
+			return new XmlText(formatDate(calendar.getTime()));
 		} else {
 			return new XmlText(obj.toString());
 		}
+	}
+
+	/**
+	 * In Java 6, the time zone cannot be formatted the way we want it for Xml
+	 * We must add the ':' in the time zone numbers. In Java 7, this can be done
+	 * using the XXX pattern with the SimpleDateFormat but this ain't supported
+	 * in previous versions
+	 * 
+	 * @param date
+	 *            The date to be formatted
+	 * 
+	 * @return The formatted date according to
+	 *         http://books.xmlschemata.org/relaxng/ch19-77049.html
+	 */
+	private String formatDate(Date date) {
+		String formattedDate = "";
+		formattedDate = DATE_FORMAT.format(date);
+		if (StringUtils.isNotEmpty(formattedDate)) {
+			int l = formattedDate.length();
+			l = l - 2;
+			String left = formattedDate.substring(0, l);
+			String right = formattedDate.substring(l);
+			formattedDate = left + ":" + right;
+		}
+		return formattedDate;
 	}
 
 	private boolean isBasicType(Class<?> type) {
@@ -256,10 +283,10 @@ public class XmlBuilder {
 				}
 			}
 		}
-		
+
 		Collections.sort(ret, new Comparator<Method>() {
 			public int compare(Method m1, Method m2) {
-				
+
 				int order1 = Integer.MIN_VALUE;
 				XmlOrder xorder1 = m1.getAnnotation(XmlOrder.class);
 				if (xorder1 != null) {
@@ -271,12 +298,12 @@ public class XmlBuilder {
 				if (xorder2 != null) {
 					order2 = xorder2.value();
 				}
-				
+
 				int diff = order1 - order2;
 				if (diff == 0) {
-					diff = m1.getName().compareTo(m2.getName()); 
+					diff = m1.getName().compareTo(m2.getName());
 				}
-				
+
 				return diff;
 			}
 		});
