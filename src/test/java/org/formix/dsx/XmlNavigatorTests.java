@@ -9,7 +9,6 @@ import org.junit.Test;
 public class XmlNavigatorTests {
 
 	public XmlNavigatorTests() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Test

@@ -33,13 +33,13 @@ public class TestXmlElement {
 
 	private XmlElement createElement() {
 		XmlElement html = new XmlElement("html");
-		html.addAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+		html.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
 		XmlElement head = html.addElement("head");
 
 		head.addElement("title").addText("This is an XHTML example");
 
 		XmlElement script = head.addElement("script");
-		script.addAttribute("type", "text/javascript");
+		script.setAttribute("type", "text/javascript");
 		script.addText("//<!--");
 		script.addCDATA("\nfunction f() { alert(\"hello world!\"); }\n//");
 		script.addText("-->");
@@ -47,7 +47,7 @@ public class TestXmlElement {
 		html.addComment("this is a comment");
 
 		XmlElement body = html.addElement("body");
-		body.addAttribute("onload", "f()");
+		body.setAttribute("onload", "f()");
 		body.addElement("h1").addText("Lorem ipsum dolor sit amet");
 
 		body.addElement("p")
@@ -62,7 +62,7 @@ public class TestXmlElement {
 								+ "cupidatat non proident, sunt in culpa qui officia "
 								+ "deserunt mollit anim id est laborum.");
 
-		body.addElement("hr").addAttribute("class", "myRuler");
+		body.addElement("hr").setAttribute("class", "myRuler");
 
 		body.addElement("h1").addText("Duis aute irure dolor");
 
