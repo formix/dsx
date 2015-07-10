@@ -50,7 +50,7 @@ public class XmlBuilder {
 			if (!reference.equals("")) {
 				nameSpaceDecl += ":" + reference;
 			}
-			root.addAttribute(nameSpaceDecl, nameSpace);
+			root.setAttribute(nameSpaceDecl, nameSpace);
 		}
 		return root;
 	}
@@ -115,7 +115,7 @@ public class XmlBuilder {
 						.getAnnotation(XmlAttribute.class);
 				if (attribute != null) {
 					String value = this.getValue(child);
-					root.addAttribute(childName, value);
+					root.setAttribute(childName, value);
 				} else {
 					XmlType xmlType = method.getAnnotation(XmlType.class);
 					if (xmlType != null) {
@@ -129,7 +129,7 @@ public class XmlBuilder {
 				if (explicitNull != null) {
 					XmlElement child = new XmlElement(childName);
 					String ns = this.getNameSpaceReference(XSI);
-					child.addAttribute(ns + ":nil", "true");
+					child.setAttribute(ns + ":nil", "true");
 					root.addChild(child);
 				}
 			}
@@ -168,7 +168,7 @@ public class XmlBuilder {
 		}
 		if (child instanceof XmlElement) {
 			XmlElement childElement = (XmlElement) child;
-			childElement.addAttribute(prefix + "type", typeName);
+			childElement.setAttribute(prefix + "type", typeName);
 		}
 	}
 
