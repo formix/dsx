@@ -83,4 +83,8 @@ public class XmlNavigatorTests {
 		Assert.assertEquals("test", name);
 	}
 
+	
+	// TODO: Add test for exists("/some/elem@attribute") to determine if attribute exists.
+	// TODO: Add test for indexed node names ("/parent/children/child[2]") // returns the third child.
+	// TODO: Add test for getElements()
 }

@@ -1,7 +1,11 @@
 package org.formix.dsx;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.formix.dsx.XmlContent;
 import org.formix.dsx.XmlElement;
@@ -63,8 +67,7 @@ public class XmlNavigator {
 
 		String attributeName = this.getAttributeName(path);
 		if (attributeName != null) {
-			localPath = path.substring(0,
-					path.length() - attributeName.length() - 1);
+			localPath = path.substring(0, path.length() - attributeName.length() - 1);
 		}
 
 		XmlElement elem = this.getElement(localPath);
@@ -98,6 +101,7 @@ public class XmlNavigator {
 		return path.substring(arobasIndex + 1);
 	}
 
+	
 	public XmlElement getElement(String path) {
 		if (root == null) {
 			return null;
@@ -107,17 +111,68 @@ public class XmlNavigator {
 		XmlElement curr = this.root;
 		names.poll(); // removes the root empty name
 		String name = names.poll();
-		while (name != null) {
-			if (curr == null) {
-				return null;
+		while ((name != null) && (curr != null)) {
+			Pattern pattern = Pattern.compile("(.+)\\[([0-9]+)\\]");
+			Matcher matcher = pattern.matcher(curr.getName());
+			if (matcher.matches()) {
+				String elemName = matcher.group(1);
+				int index = Integer.parseInt(matcher.group(2));
+				curr = curr.getElement(elemName, index);
+			} else {
+				curr = curr.getElement(name);
 			}
-			curr = curr.getElement(name);
 			name = names.poll();
 		}
 		return curr;
 	}
 
+	/**
+	 * Return all elements that corresponds to the last element name in the
+	 * given path.
+	 * 
+	 * For example:
+	 * 
+	 * /items/item
+	 * 
+	 * will return a List containing all <item> elements under <items>.
+	 * 
+	 * @param path
+	 *            The path to the elements to return.
+	 * 
+	 * @return A List of elements corresponding to the given path. An empty list
+	 *         if the path is invalid or empty.
+	 */
+	public List<XmlElement> getElements(String path) {
+		int lastElemIndex = path.lastIndexOf('/');
+		String parentPath = path.substring(0, lastElemIndex);
+		XmlElement elem = this.getElement(parentPath);
+		if (elem == null) {
+			return new ArrayList<XmlElement>(0);
+		}
+		String elemName = path.substring(lastElemIndex + 1);
+		return elem.getElements(elemName);
+	}
+
+	/**
+	 * Tells if a given path is valid or not.
+	 * 
+	 * @param path
+	 *            The path to test.
+	 * 
+	 * @return True if the given path is valid, false otherwise.
+	 */
 	public boolean exists(String path) {
-		return getElement(path) != null;
+		String localPath = path;
+		String attributeName = this.getAttributeName(path);
+		if (attributeName != null) {
+			localPath = path.substring(0, path.length() - attributeName.length() - 1);
+			XmlElement elem = this.getElement(localPath);
+			if (elem == null) {
+				return false;
+			}
+			return elem.getAttributes().containsKey(attributeName);
+		} else {
+			return getElement(path) != null;
+		}
 	}
 }
