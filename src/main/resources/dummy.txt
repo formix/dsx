@@ -1,0 +1,1 @@
+Just there to insure that the src/main/resource directory is created.
