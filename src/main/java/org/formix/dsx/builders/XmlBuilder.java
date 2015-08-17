@@ -183,11 +183,13 @@ public class XmlBuilder {
 				prefix = reference + ":";
 			}
 			String typeName = childType.getSimpleName().toLowerCase();
-			if (typeName.equals("bigdecimal")) {
+			if (typeName.equals("integer")) {
+				typeName = "int";
+			} else if (typeName.equals("bigdecimal")) {
 				typeName = "decimal";
 			} else if (typeName.equals("date") || typeName.equals("calendar")) {
 				typeName = "dateTime";
-			}
+			} 
 			return prefix + typeName;
 		} else {
 			String prefix = "";
