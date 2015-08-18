@@ -2,7 +2,37 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.formix</groupId>
+	<artifactId>dsx</artifactId>
 	<version>0.9.3</version>
+	<packaging>jar</packaging>
+
+	<name>Damn Simple XML</name>
+	<description>A method chaining Java XML Library, non compliant with the Java XML Standard API.</description>
+	<url>http://formix.org</url>
+	<scm>
+		<url>https://github.com/formix/dsx.git</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>001</id>
+			<name>Jean-Philippe Gravel, P. Eng., CSDP</name>
+			<email>jpg@formix.org</email>
+			<timezone>-5</timezone>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+		</developer>
+	</developers>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -26,6 +56,37 @@
 				<configuration>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keyname>BF8E1FF1</keyname>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -46,8 +107,6 @@
 			<version>2.6</version>
 		</dependency>
 	</dependencies>
-	<name>Damn Simple XML</name>
-	<artifactId>dsx</artifactId>
 
 	<reporting>
 		<plugins>
