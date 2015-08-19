@@ -12,6 +12,15 @@
 	<scm>
 		<url>https://github.com/formix/dsx.git</url>
 	</scm>
+	
+	<properties>
+		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+		<jarsigner.pass>devkey</jarsigner.pass>
+		<jarsigner.keystore>dev.keystore</jarsigner.keystore>
+		<jarsigner.alias>${jarsigner.pass}</jarsigner.alias>
+		<jarsigner.storepass>${jarsigner.pass}</jarsigner.storepass>
+		<jarsigner.keypass>${jarsigner.pass}</jarsigner.keypass>
+	</properties>
 
 	<licenses>
 		<license>
@@ -36,6 +45,15 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.3</version>
@@ -44,6 +62,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -72,8 +91,8 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.4</version>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -84,7 +103,10 @@
 					</execution>
 				</executions>
 				<configuration>
-					<keyname>BF8E1FF1</keyname>
+					<alias>${jarsigner.alias}</alias>
+					<keystore>${jarsigner.keystore}</keystore>
+					<storepass>${jarsigner.storepass}</storepass>
+					<keypass>${jarsigner.keypass}</keypass>
 				</configuration>
 			</plugin>
 		</plugins>
