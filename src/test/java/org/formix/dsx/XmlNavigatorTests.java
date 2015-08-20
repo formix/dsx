@@ -82,9 +82,18 @@ public class XmlNavigatorTests {
 		String name = xnav.getText("/item/child@name");
 		Assert.assertEquals("test", name);
 	}
-
+	
+	
+	@Test
+	public void testGetByIndex() throws Exception {
+		String xml = "<root><item><subitem0 /><subitem1 /><subitem2 /></item></root>";
+		XmlElement root = XmlElement.readXML(xml);
+		XmlNavigator xnav = new XmlNavigator(root);
+		XmlElement elem = xnav.getElement("/item[1]");
+		Assert.assertEquals("subitem2", elem.getName());
+	}
 	
 	// TODO: Add test for exists("/some/elem@attribute") to determine if attribute exists.
-	// TODO: Add test for indexed node names ("/parent/children/child[2]") // returns the third child.
+	// TODO: Add test for indexed node names ("/parent/children[2]") // returns the third XmlElement of children.
 	// TODO: Add test for getElements()
 }

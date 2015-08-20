@@ -26,40 +26,57 @@ import org.formix.dsx.XmlContent;
 import org.formix.dsx.XmlElement;
 
 /**
- * Helps navigate through XML hierarchy using a simple XPath like syntax.
+ * <p>
+ * Helps navigate through an XML hierarchy using a simple XPath like syntax.
+ * </p>
  * 
+ * <p>
  * The root element name is always omitted. For example, if you create an
  * XmlNavigator with the following XmlElement as root:
+ * </p>
  * 
+ * <p>
  * <code>
- *   <root>
- *     <child>Hello</child>
- *   </root>   
+ *   &lt;root&gt;
+ *     &lt;child&gt;hello&lt;/child&gt;
+ *   &lt;/root&gt;   
  * </code>
+ * </p>
  *
- * the following code will return the "Hello" value:
+ * <p>
+ * the following code will return "hello":
+ * </p>
  * 
+ * <p>
  * <code>
  * XmlNavigator xnav = new XmlNavigator(root);
  * xnav.getText("/child"); // will return "hello" 
  * </code>
+ * </p>
  * 
+ * <p>
  * An XmlNavigator never throw exception if a node specified in the path does
- * not exists. If it's the case, it will return the value null which may be
- * confused with the possibility the the node is an empty xml element, i.e.:
- * <code><empty/></code>. To distinguish this case, use the {@code exists}
+ * not exists. If it's the case, it will return null which may be confused with
+ * the possibility the the node is an empty xml element, i.e.:
+ * <code>&lt;empty/&gt;</code>. To distinguish this case, use the {@code exists}
  * method.
+ * </p>
  * 
+ * <p>
  * To get a node attribute value, use the following syntax:
+ * </p>
  * 
+ * <p>
  * <code>
  *   xnav.getText("/child/subItem@attributeName");
  * </code>
+ * </p>
  * 
+ * <p>
  * The previous code will return the text from the attribute named
- * "attributeName" of the "subItem" node. Once again, to distinguish the
- * stand alone attribute and an non existent attribute, use the {@code exists}
- * method.
+ * "attributeName" of the "subItem" node. Once again, to distinguish the stand
+ * alone attribute and an non existent attribute, use the {@code exists} method.
+ * </p>
  * 
  * @author jpgravel
  *
@@ -68,18 +85,55 @@ public class XmlNavigator {
 
 	private XmlElement root;
 
+	/**
+	 * Creates a ne XmlNavigator using the given XmlElement as root.
+	 * 
+	 * @param root
+	 *            The root XmlElement.
+	 */
 	public XmlNavigator(XmlElement root) {
 		this.root = root;
 	}
 
+	/**
+	 * Gets the root element.
+	 * 
+	 * @return the root element.
+	 */
 	public XmlElement getRoot() {
 		return root;
 	}
-	
+
+	/**
+	 * Sets the root element.
+	 * 
+	 * @param root
+	 *            the root element.
+	 */
 	protected void setRoot(XmlElement root) {
 		this.root = root;
 	}
 
+	/**
+	 * <p>
+	 * Gets the concatenated text of all children of the element targeted by the
+	 * given path.
+	 * </p>
+	 * 
+	 * <p>
+	 * To get an attribute's text, use the following syntax:
+	 * </p>
+	 * 
+	 * <p>
+	 * <code>"/container/item@name"</code>
+	 * </p>
+	 * 
+	 * @param path
+	 *            the path pointing to an XmlElement or attribute.
+	 * 
+	 * @return the concatenated text of all children of the element targeted by
+	 *         the given path. Returns null if the given path is invalid.
+	 */
 	public String getText(String path) {
 
 		String localPath = path;
@@ -120,7 +174,11 @@ public class XmlNavigator {
 		return path.substring(arobasIndex + 1);
 	}
 
-	
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public XmlElement getElement(String path) {
 		if (root == null) {
 			return null;
@@ -128,15 +186,23 @@ public class XmlNavigator {
 		LinkedList<String> names = new LinkedList<String>();
 		Collections.addAll(names, path.split("/"));
 		XmlElement curr = this.root;
-		names.poll(); // removes the root empty name
+		if (path.startsWith("/")) {
+			names.poll(); // removes the root empty name
+		}
 		String name = names.poll();
 		while ((name != null) && (curr != null)) {
-			Pattern pattern = Pattern.compile("(.+)\\[([0-9]+)\\]");
-			Matcher matcher = pattern.matcher(curr.getName());
+			Pattern pattern = Pattern.compile("(.*)\\[([0-9]+)\\]");
+			Matcher matcher = pattern.matcher(name);
 			if (matcher.matches()) {
-				String elemName = matcher.group(1);
+				name = matcher.group(1);
+				XmlElement child = curr.getElement(name);
 				int index = Integer.parseInt(matcher.group(2));
-				curr = curr.getElement(elemName, index);
+				List<XmlElement> elements = child.getElements();
+				if (index >= elements.size()) {
+					curr = null;
+				} else {
+					curr = elements.get(index);
+				}
 			} else {
 				curr = curr.getElement(name);
 			}
@@ -153,7 +219,8 @@ public class XmlNavigator {
 	 * 
 	 * /items/item
 	 * 
-	 * will return a List containing all <item> elements under <items>.
+	 * will return a List containing all &lt;item&gt; elements under
+	 * &lt;items&gt;.
 	 * 
 	 * @param path
 	 *            The path to the elements to return.
