@@ -17,10 +17,13 @@
 		class also offer XPath like methods to fetch information from the 
 		underlying XML tree.   
 	</description>
-	<url>http://formix.org</url>
+	<url>http://formix.github.io/dsx/</url>
 	<scm>
+		<connection>scn:git:https://github.com/formix/dsx.git</connection>
+		<developerConnection>scn:git:https://github.com/formix/dsx.git</developerConnection>
 		<url>https://github.com/formix/dsx.git</url>
 	</scm>
+	
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -83,6 +86,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.3</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
