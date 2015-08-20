@@ -70,7 +70,7 @@ public class XmlSerializer {
 	 * 
 	 * Default mappings:
 	 * 
-	 * Collection -> ArrayList, List -> ArrayList, Set -> HashSet, SortedSet ->
+	 * Collection -&gt; ArrayList, List -&gt; ArrayList, Set -&gt; HashSet, SortedSet -&gt;
 	 * TreeSet
 	 * 
 	 * @return a map defining which class to instantiate when a Collection is

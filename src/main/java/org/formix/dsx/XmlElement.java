@@ -349,6 +349,10 @@ public class XmlElement implements XmlContent {
 			return false;
 
 		XmlElement other = (XmlElement) o;
+		
+		if (this.id != other.id) {
+			return false;
+		}
 
 		if (!this.name.equals(other.name))
 			return false;
@@ -401,7 +405,7 @@ public class XmlElement implements XmlContent {
 	/**
 	 * Gets the attribute map of the current XmlElement.
 	 * 
-	 * @return A Map<String, String> containing all attributes of this
+	 * @return A Map&lt;String, String&gt; containing all attributes of this
 	 *         XmlElement.
 	 */
 	public Map<String, String> getAttributes() {
@@ -525,6 +529,24 @@ public class XmlElement implements XmlContent {
 		}
 		return elements;
 	}
+
+	
+	/**
+	 * Gets a list of all XmlElement children.
+	 * 
+	 * @return a list of all XmlElement children.
+	 */
+	public List<XmlElement> getElements() {
+		ArrayList<XmlElement> elements = new ArrayList<XmlElement>();
+		for (XmlContent content : this.childs) {
+			if (content instanceof XmlElement) {
+				elements.add((XmlElement) content);
+			}
+		}
+		return elements;
+	}
+
+	
 
 	@Override
 	public long getId() {

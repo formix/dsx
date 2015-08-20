@@ -37,9 +37,9 @@ import org.formix.dsx.XmlElement;
  * 
  * <p>
  * <code>
- *   &lt;root&gt;
- *     &lt;child&gt;hello&lt;/child&gt;
- *   &lt;/root&gt;   
+ *   &lt;root&gt;<br>
+ *     &lt;child&gt;hello&lt;/child&gt;<br>
+ *   &lt;/root&gt;<br>
  * </code>
  * </p>
  *
@@ -49,7 +49,7 @@ import org.formix.dsx.XmlElement;
  * 
  * <p>
  * <code>
- * XmlNavigator xnav = new XmlNavigator(root);
+ * XmlNavigator xnav = new XmlNavigator(root);<br>
  * xnav.getText("/child"); // will return "hello" 
  * </code>
  * </p>

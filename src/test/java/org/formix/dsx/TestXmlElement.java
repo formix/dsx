@@ -52,7 +52,7 @@ public class TestXmlElement {
 
 		body.addElement("p")
 				.addText(
-						"É Lorem ipsum dolor sit amet, consectetur adipisicing "
+						"Lorem ipsum dolor sit amet, consectetur adipisicing "
 								+ "elit, sed do eiusmod tempor incididunt ut labore et "
 								+ "dolore magna aliqua. Ut enim ad minim veniam, quis "
 								+ "nostrud exercitation ullamco laboris nisi ut aliquip "
@@ -95,7 +95,7 @@ public class TestXmlElement {
 	public void testReaderHugeDoc() throws Exception {
 		System.setProperty("entityExpansionLimit", "5000000");
 		XmlElement elem = XmlElement.readXML(new File("hugedoc.xhtml"));
-		System.out.println("Nombre d'éléments au total: "
+		System.out.println("Nombre d'Ã©lÃ©ments au total: "
 				+ this.countChildElements(elem));
 	}
 
