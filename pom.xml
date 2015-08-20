@@ -12,14 +12,16 @@
 	<scm>
 		<url>https://github.com/formix/dsx.git</url>
 	</scm>
-	
+
 	<properties>
-		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jarsigner.pass>devkey</jarsigner.pass>
 		<jarsigner.keystore>dev.keystore</jarsigner.keystore>
 		<jarsigner.alias>${jarsigner.pass}</jarsigner.alias>
 		<jarsigner.storepass>${jarsigner.pass}</jarsigner.storepass>
 		<jarsigner.keypass>${jarsigner.pass}</jarsigner.keypass>
+		<gpg.keyname>BF8E1FF1</gpg.keyname>
 	</properties>
 
 	<licenses>
@@ -107,6 +109,24 @@
 					<keystore>${jarsigner.keystore}</keystore>
 					<storepass>${jarsigner.storepass}</storepass>
 					<keypass>${jarsigner.keypass}</keypass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<passphraseServerId>${gpg.keyname}</passphraseServerId>
+					<keyname>${gpg.keyname}</keyname>
 				</configuration>
 			</plugin>
 		</plugins>
