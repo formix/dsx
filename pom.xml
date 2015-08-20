@@ -7,7 +7,13 @@
 	<packaging>jar</packaging>
 
 	<name>Damn Simple XML</name>
-	<description>A method chaining Java XML Library, non compliant with the Java XML Standard API.</description>
+	<description>
+		This library leverage method chaining. It is not compliant with the 
+		Java XML Standard API. It contains a serializer compatible with 
+		Microsoft XmlSerializer input/output XML format. It contains another 
+		serializer that is compatible with the DataContractSerializer from 
+		Microsoft. It aslo offer an XPath like class that ease  
+	</description>
 	<url>http://formix.org</url>
 	<scm>
 		<url>https://github.com/formix/dsx.git</url>

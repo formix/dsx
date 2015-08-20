@@ -58,7 +58,7 @@ import org.formix.dsx.XmlElement;
  * 
  * The previous code will return the text from the attribute named
  * "attributeName" of the "subItem" node. Once again, to distinguish the
- * standalone attribute and an inexisting attribute, use the {@code exists}
+ * stand alone attribute and an non existent attribute, use the {@code exists}
  * method.
  * 
  * @author jpgravel
@@ -74,6 +74,10 @@ public class XmlNavigator {
 
 	public XmlElement getRoot() {
 		return root;
+	}
+	
+	protected void setRoot(XmlElement root) {
+		this.root = root;
 	}
 
 	public String getText(String path) {

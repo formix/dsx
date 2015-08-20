@@ -40,7 +40,7 @@ import org.formix.dsx.utils.Environment;
  * @author jpgravel
  * 
  */
-public class XmlDocument implements XmlBloc {
+public class XmlDocument extends XmlNavigator implements XmlBloc {
 
 	/**
 	 * Creates a map between any XmlContent and it's parent XmlElement. The link
@@ -70,7 +70,6 @@ public class XmlDocument implements XmlBloc {
 		}
 	}
 
-	private XmlElement root;
 	private XmlDocumentType xmlDocumentType;
 
 	/**
@@ -111,17 +110,8 @@ public class XmlDocument implements XmlBloc {
 	 *            The document type of the created XmlDocument.
 	 */
 	public XmlDocument(XmlElement root, XmlDocumentType doctype) {
-		this.root = root;
+		super(root);
 		this.xmlDocumentType = doctype;
-	}
-
-	/**
-	 * Gets the root XmlElement.
-	 * 
-	 * @return the root XmlElement.
-	 */
-	public XmlElement getRoot() {
-		return root;
 	}
 
 	/**
@@ -131,7 +121,7 @@ public class XmlDocument implements XmlBloc {
 	 *            the root XmlElement.
 	 */
 	public void setRoot(XmlElement root) {
-		this.root = root;
+		super.setRoot(root);
 	}
 
 	/**
@@ -157,9 +147,9 @@ public class XmlDocument implements XmlBloc {
 	 * Removes any XmlText in XmlElements that contains white spaces only.
 	 */
 	public void cleanUp() {
-		if (this.root == null)
+		if (this.getRoot() == null)
 			return;
-		this.removeWhiteSpaces(this.root);
+		this.removeWhiteSpaces(this.getRoot());
 	}
 
 	private void removeWhiteSpaces(XmlElement node) {
@@ -199,10 +189,10 @@ public class XmlDocument implements XmlBloc {
 	 *            the indentation string used to indent embedded XmlElements.
 	 */
 	public void format(String eol, String indent) {
-		if (this.root == null)
+		if (this.getRoot() == null)
 			return;
 		this.cleanUp();
-		this.formatTree(this.root, eol, 0, indent);
+		this.formatTree(this.getRoot(), eol, 0, indent);
 	}
 
 	private void formatTree(XmlElement node, String eol, int level,
@@ -276,7 +266,7 @@ public class XmlDocument implements XmlBloc {
 			return false;
 		XmlDocument other = (XmlDocument) o;
 		return this.xmlDocumentType.equals(other.xmlDocumentType)
-				&& this.root.deepEquals(other.root);
+				&& this.getRoot().deepEquals(other.getRoot());
 	}
 
 	/**
@@ -363,7 +353,7 @@ public class XmlDocument implements XmlBloc {
 	 */
 	public void load(Reader reader, XmlContentListener listener)
 			throws IOException, XmlException {
-		this.root = XmlElement.readXML(reader, listener);
+		this.setRoot(XmlElement.readXML(reader, listener));
 	}
 
 	/**
@@ -401,8 +391,8 @@ public class XmlDocument implements XmlBloc {
 		} else if (this.xmlDocumentType == XmlDocumentType.XML_1_1) {
 			pw.println("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
 		}
-		if (root != null) {
-			this.root.write(writer);
+		if (this.getRoot() != null) {
+			this.getRoot().write(writer);
 			pw.flush();
 		}
 	}
@@ -430,6 +420,6 @@ public class XmlDocument implements XmlBloc {
 	 * @return a map between a child XmlContent's id and a parent XmlElement.
 	 */
 	public Map<Long, XmlElement> createParentMap() {
-		return createParentMap(this.root);
+		return createParentMap(this.getRoot());
 	}
 }
