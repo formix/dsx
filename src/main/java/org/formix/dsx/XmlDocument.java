@@ -32,6 +32,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.formix.dsx.utils.Environment;
+
 /**
  * Represents an XML document with the XML header.
  * 
@@ -69,13 +71,13 @@ public class XmlDocument implements XmlBloc {
 	}
 
 	private XmlElement root;
-	private DocumentType documentType;
+	private XmlDocumentType xmlDocumentType;
 
 	/**
 	 * Creates an instance of XmlDocument version 1.0
 	 */
 	public XmlDocument() {
-		this(null, DocumentType.XML_1_0);
+		this(null, XmlDocumentType.XML_1_0);
 	}
 
 	/**
@@ -85,7 +87,7 @@ public class XmlDocument implements XmlBloc {
 	 *            The root element used for the document.
 	 */
 	public XmlDocument(XmlElement root) {
-		this(root, DocumentType.XML_1_0);
+		this(root, XmlDocumentType.XML_1_0);
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class XmlDocument implements XmlBloc {
 	 * @param doctype
 	 *            The document type of the created XmlDocument.
 	 */
-	public XmlDocument(DocumentType doctype) {
+	public XmlDocument(XmlDocumentType doctype) {
 		this(null, doctype);
 	}
 
@@ -108,9 +110,9 @@ public class XmlDocument implements XmlBloc {
 	 * @param doctype
 	 *            The document type of the created XmlDocument.
 	 */
-	public XmlDocument(XmlElement root, DocumentType doctype) {
+	public XmlDocument(XmlElement root, XmlDocumentType doctype) {
 		this.root = root;
-		this.documentType = doctype;
+		this.xmlDocumentType = doctype;
 	}
 
 	/**
@@ -133,22 +135,22 @@ public class XmlDocument implements XmlBloc {
 	}
 
 	/**
-	 * Gets the DocumentType.
+	 * Gets the XmlDocumentType.
 	 * 
-	 * @return the DocumentType.
+	 * @return the XmlDocumentType.
 	 */
-	public DocumentType getDocumentType() {
-		return documentType;
+	public XmlDocumentType getDocumentType() {
+		return xmlDocumentType;
 	}
 
 	/**
-	 * Sets the DocumentType.
+	 * Sets the XmlDocumentType.
 	 * 
-	 * @param documentType
-	 *            The DocumentType.
+	 * @param xmlDocumentType
+	 *            The XmlDocumentType.
 	 */
-	public void setDocumentType(DocumentType documentType) {
-		this.documentType = documentType;
+	public void setDocumentType(XmlDocumentType xmlDocumentType) {
+		this.xmlDocumentType = xmlDocumentType;
 	}
 
 	/**
@@ -273,7 +275,7 @@ public class XmlDocument implements XmlBloc {
 		if (!(o instanceof XmlDocument))
 			return false;
 		XmlDocument other = (XmlDocument) o;
-		return this.documentType.equals(other.documentType)
+		return this.xmlDocumentType.equals(other.xmlDocumentType)
 				&& this.root.deepEquals(other.root);
 	}
 
@@ -331,7 +333,7 @@ public class XmlDocument implements XmlBloc {
 	 * <pre>
 	 * {
 	 * 	&#064;code
-	 * 	XmlDocument htmldoc = new XmlDocument(DocumentType.XHTML);
+	 * 	XmlDocument htmldoc = new XmlDocument(XmlDocumentType.XHTML);
 	 * 	final Map&lt;String, XmlElement&gt; index = new HashMap&lt;String, XmlElement&gt;();
 	 * 	XmlContentAdapter adapter = new XmlContentAdapter() {
 	 * 		&#064;Override
@@ -391,12 +393,12 @@ public class XmlDocument implements XmlBloc {
 	 */
 	public void save(Writer writer) throws IOException {
 		PrintWriter pw = new PrintWriter(writer);
-		if (this.documentType == DocumentType.XHTML) {
+		if (this.xmlDocumentType == XmlDocumentType.XHTML) {
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			pw.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
-		} else if (this.documentType == DocumentType.XML_1_0) {
+		} else if (this.xmlDocumentType == XmlDocumentType.XML_1_0) {
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		} else if (this.documentType == DocumentType.XML_1_1) {
+		} else if (this.xmlDocumentType == XmlDocumentType.XML_1_1) {
 			pw.println("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
 		}
 		if (root != null) {

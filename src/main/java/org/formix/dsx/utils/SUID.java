@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.formix.dsx;
+package org.formix.dsx.utils;
 
 import java.util.Random;
 
@@ -23,7 +23,7 @@ import java.util.Random;
  * @author jpgravel
  *
  */
-final class SUID {
+public final class SUID {
 
 	private static final int SHORT_MAX = 65536;
 	

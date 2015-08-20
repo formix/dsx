@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.formix.dsx.utils.SUID;
 
 public class XmlText implements XmlContent {
 

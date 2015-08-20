@@ -18,7 +18,7 @@ package org.formix.dsx;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.formix.dsx.SUID;
+import org.formix.dsx.utils.SUID;
 import org.junit.Assert;
 import org.junit.Test;
 

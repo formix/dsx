@@ -22,7 +22,7 @@ package org.formix.dsx;
  * @author jpgravel
  *
  */
-public enum DocumentType {
+public enum XmlDocumentType {
 	XHTML,
 	XML_1_0,
 	XML_1_1

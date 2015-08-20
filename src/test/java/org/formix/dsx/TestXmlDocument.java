@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 
-import org.formix.dsx.DocumentType;
+import org.formix.dsx.XmlDocumentType;
 import org.formix.dsx.XmlDocument;
 import org.formix.dsx.XmlElement;
 import org.junit.Assert;
@@ -75,7 +75,7 @@ public class TestXmlDocument {
 		InputStream is = this.getClass().getResourceAsStream("statistics.html");
 		Reader reader = new InputStreamReader(is);
 		XmlDocument doc = new XmlDocument();
-		doc.setDocumentType(DocumentType.XHTML);
+		doc.setDocumentType(XmlDocumentType.XHTML);
 		doc.load(reader);
 		is.close();
 
