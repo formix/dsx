@@ -18,15 +18,38 @@ package org.formix.dsx;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.formix.dsx.utils.SUID;
 
+/**
+ * Represents a text within the XML tree.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlText implements XmlContent {
 
 	private long id;
 	private StringBuilder text;
 
+	/**
+	 * Creates an empty XmlText instance.
+	 */
+	public XmlText() {
+		this("");
+	}
+
+	/**
+	 * Creates an XmlText instance with the given text.
+	 * 
+	 * @param text
+	 *            The text used to initialize this XmlText instance.
+	 */
 	public XmlText(String text) {
+		if (text == null) {
+			throw new NullArgumentException("text");
+		}
 		this.text = new StringBuilder(text);
 		this.id = -1;
 	}
@@ -39,14 +62,31 @@ public class XmlText implements XmlContent {
 		return this.id;
 	}
 
+	/**
+	 * Gets the text value.
+	 * 
+	 * @return the text value;
+	 */
 	public String getText() {
 		return this.text.toString();
 	}
 
-	public void setText(String value) {
-		this.text = new StringBuilder(value);
+	/**
+	 * Sets the text value.
+	 * 
+	 * @param text
+	 *            the text value.
+	 */
+	public void setText(String text) {
+		this.text = new StringBuilder(text);
 	}
 
+	/**
+	 * Appends a string to the current text.
+	 * 
+	 * @param value
+	 *            the string to append.
+	 */
 	public void append(String value) {
 		this.text.append(value);
 	}
