@@ -57,13 +57,12 @@ import org.formix.dsx.XmlElement;
  * <p>
  * An XmlNavigator never throw exception if a node specified in the path does
  * not exists. If it's the case, it will return null which may be confused with
- * the possibility the the node is an empty xml element, i.e.:
- * <code>&lt;empty/&gt;</code>. To distinguish this case, use the {@code exists}
- * method.
+ * an empty xml element, i.e.: <code>&lt;empty/&gt;</code>. To distinguish these
+ * cases, use the {@code exists} method.
  * </p>
  * 
  * <p>
- * To get a node attribute value, use the following syntax:
+ * To get a node attribute text value, use the following syntax:
  * </p>
  * 
  * <p>
@@ -76,6 +75,61 @@ import org.formix.dsx.XmlElement;
  * The previous code will return the text from the attribute named
  * "attributeName" of the "subItem" node. Once again, to distinguish the stand
  * alone attribute and an non existent attribute, use the {@code exists} method.
+ * </p>
+ * 
+ * <p>
+ * It is also possible to get a sub element using the element indexer syntax.
+ * For example, given the following XML:
+ * </p>
+ * 
+ * <p>
+ * <code> 
+ * &lt;company&gt;
+ *   &lt;department&gt;
+ *     &lt;director&gt;
+ *       &lt;id&gt;3442345&lt;/id&gt;
+ *       &lt;name&gt;John Smith&lt;/name&gt;
+ *       &lt;email&gt;jsmith@company.com&lt;/email&gt;
+ *     &lt;/director&gt;
+ *   &lt;/department&gt;
+ * &lt;/company&gt;
+ * </code>
+ * </p>
+ * 
+ * <p>
+ * The following path:
+ * </p>
+ * 
+ * <p>
+ * <code>
+ * 	xnav.getElement("/deparment/director/[2]")
+ * </code>
+ * </p>
+ * 
+ * <p>
+ * Will return the "email" XmlElement.
+ * </p>
+ * 
+ * 
+ * <p>
+ * The second possible indexer notation is the named indexer. For example:
+ * </p>
+ * 
+ * <p>
+ * <code>
+ * xnav.getElement("/department/employees/employee[2]");
+ * </code>
+ * </p>
+ * 
+ * <p>
+ * The previous example will return the third element named "employee" under the
+ * "employees" XmlElement.
+ * </p>
+ * 
+ * <p>
+ * It is also possible to have an indexed in the middle of a path. For example
+ * the following path "/department/employees/[2]/name" will return the name
+ * XmlElement of the third employee under the employees node.
  * </p>
  * 
  * @author jpgravel
@@ -175,9 +229,12 @@ public class XmlNavigator {
 	}
 
 	/**
+	 * Gets the first XmlElement found at the given path.
 	 * 
 	 * @param path
-	 * @return
+	 *            The path to the desired XmlElement.
+	 * 
+	 * @return the first XmlElement found at the given path.
 	 */
 	public XmlElement getElement(String path) {
 		if (root == null) {
@@ -194,14 +251,18 @@ public class XmlNavigator {
 			Pattern pattern = Pattern.compile("(.*)\\[([0-9]+)\\]");
 			Matcher matcher = pattern.matcher(name);
 			if (matcher.matches()) {
-				name = matcher.group(1);
-				XmlElement child = curr.getElement(name);
-				int index = Integer.parseInt(matcher.group(2));
-				List<XmlElement> elements = child.getElements();
-				if (index >= elements.size()) {
-					curr = null;
+				if (matcher.group(1) == null || matcher.group(1).trim().isEmpty()) {
+					List<XmlElement> elements = curr.getElements();
+					int index = Integer.parseInt(matcher.group(2));
+					if (index >= elements.size()) {
+						curr = null;
+					} else {
+						curr = elements.get(index);
+					}
 				} else {
-					curr = elements.get(index);
+					name = matcher.group(1);
+					int index = Integer.parseInt(matcher.group(2));
+					curr = curr.getElement(name, index);
 				}
 			} else {
 				curr = curr.getElement(name);
