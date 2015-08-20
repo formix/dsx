@@ -17,9 +17,29 @@ package org.formix.dsx.serialization;
 
 import java.util.EventListener;
 
+/**
+ * Interface defining listener methods that will be called during
+ * deserialization.
+ * 
+ * @author jpgravel
+ *
+ */
 public interface SerializationEventListener extends EventListener {
 
+	/**
+	 * Event called before the deserialization occurs.
+	 * 
+	 * @param e
+	 *            the serialization event.
+	 */
 	public void beforeDeserialisation(SerializationEvent e);
+
+	/**
+	 * Event called after the deserialization occurs.
+	 * 
+	 * @param e
+	 *            the serialization event.
+	 */
 	public void afterDeserialisation(SerializationEvent e);
 
 }

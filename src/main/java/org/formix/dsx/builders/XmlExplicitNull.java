@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 /**
  * The default XmlBuilder behavior is to skip object property. Adding the
- * XmlExplicitNull annotation to a property will force node addition with the
+ * XmlExplicitNull annotation to a property will add an XmlElement with the
  * attribute 'ns:nil="true"'.
  * 
  * @author jpgravel

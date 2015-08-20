@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.formix.dsx.XmlComment;
 import org.formix.dsx.XmlContent;
@@ -36,6 +37,16 @@ import org.formix.dsx.XmlElement;
 import org.formix.dsx.XmlException;
 import org.formix.dsx.XmlText;
 
+/**
+ * Generates XML using xml attributes to modulate how the xml serialization will
+ * behave. This class will hoist all namespace definitions to the root element
+ * of the final XML output. The first namespace encoutered will be set as the
+ * default name space. Further namespaces will have reference names like "ns1",
+ * "ns2", etc.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlBuilder {
 
 	public static final String XSI = "http://www.w3.org/2001/XMLSchema-instance";
@@ -45,19 +56,56 @@ public class XmlBuilder {
 
 	private Map<String, String> nameSpaces;
 
+	/**
+	 * Creates an instance of the XmlBuilder.
+	 */
 	public XmlBuilder() {
 		DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
 		this.nameSpaces = new LinkedHashMap<String, String>();
 	}
 
+	/**
+	 * <p>
+	 * Gets namespace reference entries. The map is done between the actual
+	 * namespace uri and the given reference name for this namespace. A
+	 * namespace reference map entry could be:
+	 * </p>
+	 * 
+	 * <p>
+	 * {"http://schemas.xmlsoap.org/soap/envelope/", "ns1"}
+	 * </p>
+	 * 
+	 * @return namespace reference entries.
+	 */
 	public Map<String, String> getNameSpaces() {
 		return nameSpaces;
 	}
 
+	/**
+	 * Sets namespace reference entries. You can define precisely the namespace
+	 * reference name you want to have for each namespace uri.
+	 * 
+	 * @param namespaces
+	 *            the namespace map to use.
+	 */
 	public void setNameSpaces(Map<String, String> namespaces) {
+		if (namespaces == null) {
+			throw new NullArgumentException("namespaces");
+		}
 		this.nameSpaces = namespaces;
 	}
 
+	/**
+	 * Builds the XML tree with the given object.
+	 * 
+	 * @param obj
+	 *            The object to serialize to XML.
+	 * 
+	 * @return the root XmlElement of the resulting serialization.
+	 * 
+	 * @throws XmlException
+	 *             If a problem occurs during serialization.
+	 */
 	public XmlElement buildXml(Object obj) throws XmlException {
 		XmlElement root = (XmlElement) this.createXml(obj, null);
 		for (String nameSpace : this.nameSpaces.keySet()) {
@@ -100,8 +148,7 @@ public class XmlBuilder {
 		}
 	}
 
-	private void addPropertyNodes(XmlElement root, Object obj, Class<?> type)
-			throws XmlException {
+	private void addPropertyNodes(XmlElement root, Object obj, Class<?> type) throws XmlException {
 		Method[] methods = this.fetchGetters(type);
 		for (Method method : methods) {
 
@@ -110,25 +157,23 @@ public class XmlBuilder {
 			try {
 				childObj = method.invoke(obj);
 			} catch (Exception e) {
-				throw new XmlException(String.format(
-						"A method invocation error occured on %s.%s",
-						type.getName(), method.getName()), e);
+				throw new XmlException(
+						String.format("A method invocation error occured on %s.%s", type.getName(), method.getName()),
+						e);
 			}
 
 			if (childObj != null) {
 
 				Class<?> childType = childObj.getClass();
 
-				XmlContentTypeName useContentName = method
-						.getAnnotation(XmlContentTypeName.class);
+				XmlContentTypeName useContentName = method.getAnnotation(XmlContentTypeName.class);
 				if (useContentName != null) {
 					childName = this.getNodeName(childType);
 				}
 
 				XmlContent child = this.createXml(childObj, childName);
 
-				XmlAttribute attribute = method
-						.getAnnotation(XmlAttribute.class);
+				XmlAttribute attribute = method.getAnnotation(XmlAttribute.class);
 				if (attribute != null) {
 					String value = this.getValue(child);
 					root.setAttribute(childName, value);
@@ -140,8 +185,7 @@ public class XmlBuilder {
 					root.addChild(child);
 				}
 			} else {
-				XmlExplicitNull explicitNull = method
-						.getAnnotation(XmlExplicitNull.class);
+				XmlExplicitNull explicitNull = method.getAnnotation(XmlExplicitNull.class);
 				if (explicitNull != null) {
 					XmlElement child = new XmlElement(childName);
 					String ns = this.getNameSpaceReference(XSI);
@@ -161,8 +205,7 @@ public class XmlBuilder {
 				if (sb.length() > 0) {
 					sb.append(' ');
 				}
-				if ((content instanceof XmlText)
-						&& !(content instanceof XmlComment)) {
+				if ((content instanceof XmlText) && !(content instanceof XmlComment)) {
 					sb.append(content.toString().trim());
 				}
 			}
@@ -173,13 +216,11 @@ public class XmlBuilder {
 		return value;
 	}
 
-	private void addTypeAttribute(XmlContent child, XmlType xmlType,
-			Class<?> childType) throws XmlException {
+	private void addTypeAttribute(XmlContent child, XmlType xmlType, Class<?> childType) throws XmlException {
 		String typeName = this.getTypeName(xmlType, childType);
 		String prefix = "";
 		if (!xmlType.attributeNameSpace().equals("")) {
-			String reference = this.getNameSpaceReference(xmlType
-					.attributeNameSpace());
+			String reference = this.getNameSpaceReference(xmlType.attributeNameSpace());
 			prefix = reference + ":";
 		}
 		if (child instanceof XmlElement) {
@@ -188,13 +229,11 @@ public class XmlBuilder {
 		}
 	}
 
-	private String getTypeName(XmlType xmlType, Class<?> childType)
-			throws XmlException {
+	private String getTypeName(XmlType xmlType, Class<?> childType) throws XmlException {
 		if (this.isBasicType(childType)) {
 			String prefix = "";
 			if (!xmlType.equals("")) {
-				String reference = this.getNameSpaceReference(xmlType
-						.valueNameSpace());
+				String reference = this.getNameSpaceReference(xmlType.valueNameSpace());
 				prefix = reference + ":";
 			}
 			String typeName = childType.getSimpleName().toLowerCase();
@@ -204,7 +243,7 @@ public class XmlBuilder {
 				typeName = "decimal";
 			} else if (typeName.equals("date") || typeName.equals("calendar")) {
 				typeName = "dateTime";
-			} 
+			}
 			return prefix + typeName;
 		} else {
 			String prefix = "";
@@ -216,8 +255,7 @@ public class XmlBuilder {
 		}
 	}
 
-	private void addArrayItemNodes(XmlElement root, Object obj, Class<?> type)
-			throws XmlException {
+	private void addArrayItemNodes(XmlElement root, Object obj, Class<?> type) throws XmlException {
 		if (type.isArray()) {
 			for (int i = 0; i < Array.getLength(obj); i++) {
 				Object item = Array.get(obj, i);
@@ -251,17 +289,16 @@ public class XmlBuilder {
 		}
 	}
 
-	/**
+	/*
 	 * In Java 6, the time zone cannot be formatted the way we want it for Xml
 	 * We must add the ':' in the time zone numbers. In Java 7, this can be done
 	 * using the XXX pattern with the SimpleDateFormat but this ain't supported
 	 * in previous versions
 	 * 
-	 * @param date
-	 *            The date to be formatted
+	 * @param date The date to be formatted
 	 * 
 	 * @return The formatted date according to
-	 *         http://books.xmlschemata.org/relaxng/ch19-77049.html
+	 * http://books.xmlschemata.org/relaxng/ch19-77049.html
 	 */
 	private String formatDate(Date date) {
 		String formattedDate = "";
@@ -277,12 +314,9 @@ public class XmlBuilder {
 	}
 
 	private boolean isBasicType(Class<?> type) {
-		return Date.class.isAssignableFrom(type)
-				|| Calendar.class.isAssignableFrom(type)
-				|| Enum.class.isAssignableFrom(type)
-				|| Number.class.isAssignableFrom(type)
-				|| String.class.isAssignableFrom(type)
-				|| Boolean.class.isAssignableFrom(type);
+		return Date.class.isAssignableFrom(type) || Calendar.class.isAssignableFrom(type)
+				|| Enum.class.isAssignableFrom(type) || Number.class.isAssignableFrom(type)
+				|| String.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type);
 	}
 
 	private Method[] fetchGetters(Class<?> type) {
@@ -313,12 +347,12 @@ public class XmlBuilder {
 				if (xorder2 != null) {
 					order2 = xorder2.value();
 				}
-				
+
 				int diff = order1 - order2;
 				if (diff == 0) {
 					diff = m1.getName().compareTo(m2.getName());
 				}
-				
+
 				return diff;
 			}
 		});
@@ -369,8 +403,7 @@ public class XmlBuilder {
 	}
 
 	private String getNameSpaceReference(Method method) throws XmlException {
-		String reference = this.getNameSpaceReference(method
-				.getDeclaringClass());
+		String reference = this.getNameSpaceReference(method.getDeclaringClass());
 		XmlNameSpace nsAttr = method.getAnnotation(XmlNameSpace.class);
 		if (nsAttr != null) {
 			reference = this.getNameSpaceReference(nsAttr);

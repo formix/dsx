@@ -19,22 +19,50 @@ import java.util.EventObject;
 
 import org.formix.dsx.XmlElement;
 
+/**
+ * Defines a serialization event data.
+ * 
+ * @author jpgravel
+ *
+ */
 public class SerializationEvent extends EventObject {
 	private static final long serialVersionUID = 2332694291964583929L;
 
 	private XmlElement element;
 	private Object target;
 
+	/**
+	 * Creates a SerializationEvent instance.
+	 * 
+	 * @param source
+	 *            The source of the event.
+	 * 
+	 * @param element
+	 *            The element that caused the event.
+	 * 
+	 * @param target
+	 *            The object to which the given element is related.
+	 */
 	public SerializationEvent(Object source, XmlElement element, Object target) {
 		super(source);
 		this.element = element;
 		this.target = target;
 	}
 
+	/**
+	 * Gets the XmlElement of the current event.
+	 * 
+	 * @return the XmlElement of the current event.
+	 */
 	public XmlElement getElement() {
 		return element;
 	}
 
+	/**
+	 * Gets the taget of the current event.
+	 * 
+	 * @return the taget of the current event.
+	 */
 	public Object getTarget() {
 		return target;
 	}

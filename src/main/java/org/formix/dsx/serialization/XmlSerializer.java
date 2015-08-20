@@ -31,6 +31,12 @@ import org.formix.dsx.XmlElement;
 import org.formix.dsx.XmlException;
 import org.formix.dsx.XmlText;
 
+/**
+ * Serializes an object into its XML representation.
+ * 
+ * @author jpgravel
+ *
+ */
 public class XmlSerializer {
 
 	private HashMap<Class<?>, Class<?>> collectionMap;
@@ -38,6 +44,9 @@ public class XmlSerializer {
 	private List<String> classResolutionPackages;
 	private List<SerializationEventListener> deserializationListeners;
 
+	/**
+	 * Creates an instance of XmlSerializer.
+	 */
 	public XmlSerializer() {
 		this.generalTypeMapper = new TreeMap<String, Class<?>>();
 
@@ -52,14 +61,31 @@ public class XmlSerializer {
 		this.deserializationListeners = new ArrayList<SerializationEventListener>();
 	}
 
+	/**
+	 * Gets deserialization listeners.
+	 * 
+	 * @return deserialization listeners.
+	 */
 	public List<SerializationEventListener> getDeserializationListeners() {
 		return deserializationListeners;
 	}
 
+	/**
+	 * Add a new deserialization listener.
+	 * 
+	 * @param l
+	 *            the listener added.
+	 */
 	public void addDeserializationListener(SerializationEventListener l) {
 		this.deserializationListeners.add(l);
 	}
 
+	/**
+	 * Remove a deserialization listener.
+	 * 
+	 * @param l
+	 *            The serialization listener to add.
+	 */
 	public void removeDeserializationListener(SerializationEventListener l) {
 		this.deserializationListeners.remove(l);
 	}
@@ -70,8 +96,8 @@ public class XmlSerializer {
 	 * 
 	 * Default mappings:
 	 * 
-	 * Collection -&gt; ArrayList, List -&gt; ArrayList, Set -&gt; HashSet, SortedSet -&gt;
-	 * TreeSet
+	 * Collection -&gt; ArrayList, List -&gt; ArrayList, Set -&gt; HashSet,
+	 * SortedSet -&gt; TreeSet
 	 * 
 	 * @return a map defining which class to instantiate when a Collection is
 	 *         encountered in a class member.
@@ -80,6 +106,12 @@ public class XmlSerializer {
 		return this.collectionMap;
 	}
 
+	/**
+	 * Returns the list of packages to loop into when deserializing an object
+	 * and trying to instanciate a type with a simple class name.
+	 * 
+	 * @return class resolution package names.
+	 */
 	public List<String> getClassResolutionPackages() {
 		return this.classResolutionPackages;
 	}
@@ -103,30 +135,58 @@ public class XmlSerializer {
 		this.generalTypeMapper.put(rootName, type);
 	}
 
+	/**
+	 * Add a package to the list of lookup packages.
+	 * 
+	 * @param packageName
+	 *            the package name to add.
+	 */
 	public void registerPackage(String packageName) {
 		this.classResolutionPackages.add(packageName);
 	}
 
+	/**
+	 * Deserialize the given XML into an object.
+	 * 
+	 * @param root
+	 *            The root node of the XML to deserialize.
+	 * 
+	 * @return the deserialized object.
+	 * 
+	 * @throws XmlException
+	 *             Thrown when a problem occurs during deserialization.
+	 */
 	public Object deserialize(XmlElement root) throws XmlException {
 		String simpleName = this.capitalize(root.getName());
 		Class<?> type;
 		try {
 			type = this.getType(simpleName);
 		} catch (ClassNotFoundException e) {
-			throw new XmlException(
-					"Unable to resolve to a type "
-							+ "with the given XmlElement root name '"
-							+ root.getName()
-							+ ". Try to add the right package containing the class "
-							+ simpleName
-							+ " or use the method XmlSerializer.desirialize(XmlElement, Class<?>) "
-							+ "signature instead.", e);
+			throw new XmlException("Unable to resolve to a type " + "with the given XmlElement root name '"
+					+ root.getName() + ". Try to add the right package containing the class " + simpleName
+					+ " or use the method XmlSerializer.desirialize(XmlElement, Class<?>) " + "signature instead.", e);
 		}
 		return this.deserialize(root, type);
 	}
 
-	public <T> T deserialize(XmlElement root, Class<T> type)
-			throws XmlException {
+	/**
+	 * Deserialize an XML tree into the given type.
+	 * 
+	 * @param root
+	 *            The XML root element.
+	 * 
+	 * @param type
+	 *            The type of the desired object.
+	 * 
+	 * @param <T>
+	 *            The infered type for the parameter {code type}.
+	 * 
+	 * @return a deserialized object from the given XML.
+	 * 
+	 * @throws XmlException
+	 *             Thrown when a problem occurs during deserialization.
+	 */
+	public <T> T deserialize(XmlElement root, Class<T> type) throws XmlException {
 
 		if (type.toString().equals("class [B")) {
 			@SuppressWarnings("unchecked")
@@ -136,8 +196,7 @@ public class XmlSerializer {
 
 		// If the type is a base type from java.util or java.sql or is a
 		// collection then decode it directly.
-		if (type.getName().startsWith("java.")
-				|| Collection.class.isAssignableFrom(type)) {
+		if (type.getName().startsWith("java.") || Collection.class.isAssignableFrom(type)) {
 			@SuppressWarnings("unchecked")
 			T value = (T) this.getValue(root, type, null, null);
 			return value;
@@ -158,8 +217,7 @@ public class XmlSerializer {
 		try {
 			target = type.newInstance();
 		} catch (Exception e) {
-			throw new XmlException("Unable to instanciate type "
-					+ type.getName(), e);
+			throw new XmlException("Unable to instanciate type " + type.getName(), e);
 		}
 
 		this.onBeforeDeserialization(new SerializationEvent(this, root, target));
@@ -180,20 +238,17 @@ public class XmlSerializer {
 
 					Class<?> paramType = setMethod.getParameterTypes()[0];
 					try {
-						Object value = this.getValue(elem, paramType, methods,
-								target);
+						Object value = this.getValue(elem, paramType, methods, target);
 						setMethod.invoke(target, new Object[] { value });
 					} catch (Exception e) {
 						String msg = String.format(
-								"Unable to assign the XMLElement %s to"
-										+ " the property [%s.%s] (%s)", elem,
+								"Unable to assign the XMLElement %s to" + " the property [%s.%s] (%s)", elem,
 								type.getName(), setMethod.getName(), signature);
 						throw new XmlException(msg, e);
 					}
 
 				} else {
-					throw new XmlException(String.format(
-							"Unable to find the method %s.", methodName));
+					throw new XmlException(String.format("Unable to find the method %s.", methodName));
 				}
 			}
 		}
@@ -203,39 +258,52 @@ public class XmlSerializer {
 		return target;
 	}
 
+	/**
+	 * Method called to fire the beforeDeserialization events.
+	 * 
+	 * @param e
+	 *            the serialization event.
+	 */
 	protected void onBeforeDeserialization(SerializationEvent e) {
 		for (SerializationEventListener l : this.deserializationListeners) {
 			l.beforeDeserialisation(e);
 		}
 	}
 
+	/**
+	 * Method called to fire the afterDeserialization events.
+	 * 
+	 * @param e
+	 *            the serialization event.
+	 */
 	protected void onAfterDeserialization(SerializationEvent e) {
 		for (SerializationEventListener l : this.deserializationListeners) {
 			l.afterDeserialisation(e);
 		}
 	}
 
-	/**
+	/*
 	 * Returns the value of elem as an object of type paramType. The methods and
 	 * parent parameters are used in the case that paramType is a subclass of
 	 * the Collection type.
 	 * 
 	 * @see XmlSerializer.decodeCollection for further details.
-	 * @param elem
-	 *            The xml element to be instantiated to an object of the given
-	 *            paramType.
-	 * @param paramType
-	 *            The type to be created by the getValue.
-	 * @param parentMethods
-	 *            The method list of the parent.
-	 * @param parent
-	 *            The instantiated object that will contain the instantiated
-	 *            elem.
+	 * 
+	 * @param elem The xml element to be instantiated to an object of the given
+	 * paramType.
+	 * 
+	 * @param paramType The type to be created by the getValue.
+	 * 
+	 * @param parentMethods The method list of the parent.
+	 * 
+	 * @param parent The instantiated object that will contain the instantiated
+	 * elem.
+	 * 
 	 * @return
+	 * 
 	 * @throws XmlException
 	 */
-	private Object getValue(XmlElement elem, Class<?> paramType,
-			SortedMap<String, Method> parentMethods, Object parent)
+	private Object getValue(XmlElement elem, Class<?> paramType, SortedMap<String, Method> parentMethods, Object parent)
 			throws XmlException {
 		try {
 			SortedMap<String, Method> methods = this.createMethodMap(paramType);
@@ -246,8 +314,7 @@ public class XmlSerializer {
 
 			if (elem.getChilds().size() == 0) {
 				if (Collection.class.isAssignableFrom(paramType)) {
-					return this.getCollectionValue(elem, paramType,
-							parentMethods, parent);
+					return this.getCollectionValue(elem, paramType, parentMethods, parent);
 				} else {
 					return null;
 				}
@@ -256,8 +323,7 @@ public class XmlSerializer {
 			Object value = null;
 			Iterator<XmlContent> contentIterator = elem.getChilds().iterator();
 			XmlContent firstChild = contentIterator.next();
-			while (firstChild.toString().trim().equals("")
-					&& contentIterator.hasNext()) {
+			while (firstChild.toString().trim().equals("") && contentIterator.hasNext()) {
 				// skip blank lines
 				firstChild = contentIterator.next();
 			}
@@ -267,33 +333,26 @@ public class XmlSerializer {
 				value = text.getText();
 
 			} else if (paramType.equals(Timestamp.class)) {
-				value = new Timestamp(this.parseDate(firstChild.toString())
-						.getTime());
+				value = new Timestamp(this.parseDate(firstChild.toString()).getTime());
 
 			} else if (paramType.equals(Date.class)) {
 				value = this.parseDate(firstChild.toString());
 
 			} else if (Calendar.class.isAssignableFrom(paramType)) {
 				value = new GregorianCalendar();
-				((GregorianCalendar) value).setTime(this.parseDate(firstChild
-						.toString()));
+				((GregorianCalendar) value).setTime(this.parseDate(firstChild.toString()));
 
 			} else if (paramTypeValueOfMethod != null) {
-				value = paramTypeValueOfMethod.invoke(null,
-						new Object[] { firstChild.toString() });
+				value = paramTypeValueOfMethod.invoke(null, new Object[] { firstChild.toString() });
 
 			} else if (Collection.class.isAssignableFrom(paramType)) {
-				value = this.getCollectionValue(elem, paramType, parentMethods,
-						parent);
+				value = this.getCollectionValue(elem, paramType, parentMethods, parent);
 
 			} else if (Map.class.isAssignableFrom(paramType)) {
-				throw new XmlException(
-						"The Map deserialization is not yet implemented.");
-			} else if (this.isSetter(parentMethods, elem.getName())
-					&& (firstChild instanceof XmlElement)) {
+				throw new XmlException("The Map deserialization is not yet implemented.");
+			} else if (this.isSetter(parentMethods, elem.getName()) && (firstChild instanceof XmlElement)) {
 				XmlElement elemFirstChild = (XmlElement) firstChild;
-				Class<?> specifiedType = this.getType(this
-						.capitalize(elemFirstChild.getName()));
+				Class<?> specifiedType = this.getType(this.capitalize(elemFirstChild.getName()));
 				value = this.deserialize(elemFirstChild, specifiedType);
 			} else {
 				value = this.deserialize(elem, paramType);
@@ -301,22 +360,30 @@ public class XmlSerializer {
 
 			return value;
 		} catch (Exception e) {
-			throw new XmlException("Problem getting value of " + elem
-					+ " of type " + paramType.getName(), e);
+			throw new XmlException("Problem getting value of " + elem + " of type " + paramType.getName(), e);
 		}
 	}
 
-	private boolean isSetter(SortedMap<String, Method> parentMethods,
-			String elemName) {
+	private boolean isSetter(SortedMap<String, Method> parentMethods, String elemName) {
 		String methodName = "set" + this.capitalize(elemName);
 		String signature = parentMethods.tailMap(methodName).firstKey();
 		return signature.startsWith(methodName + "-");
 	}
 
-	// Date format expected: ISO 8601: 1994-11-05T08:15:30-05:00
+	/**
+	 * Parse a date. The defeualt implementation expects the following format:
+	 * ISO 8601: 1994-11-05T08:15:30-05:00
+	 * 
+	 * @param dateString
+	 *            the date string to deserialize.
+	 * 
+	 * @return the corresponding date object.
+	 * 
+	 * @throws ParseException
+	 *             Thrown if a parsing problem occurs.
+	 */
 	protected Date parseDate(String dateString) throws ParseException {
-		Pattern p = Pattern
-				.compile("(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})([+-]\\d{2}:?\\d{2})?");
+		Pattern p = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})([+-]\\d{2}:?\\d{2})?");
 		Matcher m = p.matcher(dateString);
 		if (m.find()) {
 			int[] dateTimeParts = new int[6];
@@ -345,6 +412,15 @@ public class XmlSerializer {
 		}
 	}
 
+	/**
+	 * Format a date to the desired format. The default implementation use the
+	 * following format: ISO 8601: 1994-11-05T08:15:30-05:00.
+	 * 
+	 * @param date
+	 *            The date to format.
+	 * 
+	 * @return the string representation of the date.
+	 */
 	protected String formatDate(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -355,34 +431,34 @@ public class XmlSerializer {
 		return dateString;
 	}
 
-	/**
+	/*
 	 * This method is called when paramType is an instance of
 	 * java.util.Collection. The created collection is then filled with the
 	 * child elements.
 	 * 
-	 * @param elem
-	 *            The element representing a collection.
-	 * @param paramType
-	 *            The type of the desired collection. Before instanciating a
-	 *            collection using the internal collectionMap, the algorithm
-	 *            tries to obtain the collection from the current parent object
-	 *            using the method named "get" + capitalize(elem.getName()). If
-	 *            the call succeeds, the existing collection is used. Otherwise,
-	 *            a new collection is instantiated using the collectionMap
-	 *            definitions.
-	 * @param parentMethods
-	 *            The method map (<method name>, Method) of the parent object.
-	 *            This map is used to obtain the an existing collection object
-	 *            in the parent getter corresponding to the current elem name.
-	 * @param parent
-	 *            The parent object used to get an existing collection, if any.
+	 * @param elem The element representing a collection.
+	 * 
+	 * @param paramType The type of the desired collection. Before instanciating
+	 * a collection using the internal collectionMap, the algorithm tries to
+	 * obtain the collection from the current parent object using the method
+	 * named "get" + capitalize(elem.getName()). If the call succeeds, the
+	 * existing collection is used. Otherwise, a new collection is instantiated
+	 * using the collectionMap definitions.
+	 * 
+	 * @param parentMethods The method map (<method name>, Method) of the parent
+	 * object. This map is used to obtain the an existing collection object in
+	 * the parent getter corresponding to the current elem name.
+	 * 
+	 * @param parent The parent object used to get an existing collection, if
+	 * any.
+	 * 
 	 * @return a collection filled with the corresponding child elements.
+	 * 
 	 * @throws XmlException
 	 */
 	@SuppressWarnings("unchecked")
-	private Collection<Object> getCollectionValue(XmlElement elem,
-			Class<?> paramType, SortedMap<String, Method> parentMethods,
-			Object parent) throws XmlException {
+	private Collection<Object> getCollectionValue(XmlElement elem, Class<?> paramType,
+			SortedMap<String, Method> parentMethods, Object parent) throws XmlException {
 
 		Collection<Object> col = null;
 		if ((parentMethods != null) && (parent != null)) {
@@ -392,12 +468,10 @@ public class XmlSerializer {
 			Method colGetterMethod = parentMethods.get(signature);
 
 			try {
-				col = (Collection<Object>) colGetterMethod.invoke(parent,
-						(Object[]) null);
+				col = (Collection<Object>) colGetterMethod.invoke(parent, (Object[]) null);
 
 			} catch (Exception e) {
-				throw new XmlException("Unable to invoke collection getter: "
-						+ colGetterMethod.getName(), e);
+				throw new XmlException("Unable to invoke collection getter: " + colGetterMethod.getName(), e);
 			}
 		}
 
@@ -405,8 +479,7 @@ public class XmlSerializer {
 			if (col == null)
 				col = this.createCollection(paramType);
 		} catch (Exception e) {
-			throw new XmlException("Unable to create collection type: "
-					+ paramType.getName(), e);
+			throw new XmlException("Unable to create collection type: " + paramType.getName(), e);
 		}
 
 		for (XmlContent colContent : elem.getChilds()) {
@@ -419,9 +492,8 @@ public class XmlSerializer {
 				try {
 					colElemType = this.getType(colElemTypeName);
 				} catch (ClassNotFoundException e) {
-					throw new XmlException(
-							"Unable to find the collection's internal element type: "
-									+ colElemTypeName, e);
+					throw new XmlException("Unable to find the collection's internal element type: " + colElemTypeName,
+							e);
 				}
 
 				objToAdd = this.deserialize(colElem, colElemType);
@@ -433,14 +505,38 @@ public class XmlSerializer {
 		return col;
 	}
 
+	/**
+	 * Serializes an object into its XML representation.
+	 * 
+	 * @param target
+	 *            The object to serialize.
+	 * 
+	 * @return The root XmlElement of the serialized object.
+	 * 
+	 * @throws XmlException
+	 *             Thrown if a serialization problem occurs.
+	 */
 	public XmlElement serialize(Object target) throws XmlException {
 		Class<?> type = target.getClass();
 		String rootName = decapitalize(type.getSimpleName());
 		return this.serialize(target, rootName);
 	}
 
-	public XmlElement serialize(Object target, String rootName)
-			throws XmlException {
+	/**
+	 * Serializes an object with a different XmlElement root name.
+	 * 
+	 * @param target
+	 *            the object to serialize.
+	 * 
+	 * @param rootName
+	 *            the desired root node name.
+	 * 
+	 * @return The root element of the resulting serialization.
+	 * 
+	 * @throws XmlException
+	 *             Thrown if a serialization problem occurs.
+	 */
+	public XmlElement serialize(Object target, String rootName) throws XmlException {
 
 		Class<?> type = target.getClass();
 
@@ -452,8 +548,7 @@ public class XmlSerializer {
 
 		// If the type is a base type from java.util or java.sql then encode it
 		// directly.
-		if (type.getName().startsWith("java.")
-				|| (target instanceof Collection)) {
+		if (type.getName().startsWith("java.") || (target instanceof Collection)) {
 			this.addXmlContent(root, target);
 			return root;
 		}
@@ -470,8 +565,7 @@ public class XmlSerializer {
 				continue;
 
 			String methodName = method.getName();
-			if ((methodName.startsWith("get") || methodName.startsWith("is"))
-					&& !method.getName().equals("getClass")) {
+			if ((methodName.startsWith("get") || methodName.startsWith("is")) && !method.getName().equals("getClass")) {
 
 				// If the get method has a parameter, it may be a shortcut
 				// accessor to an internal map or collection. We skip this
@@ -505,15 +599,13 @@ public class XmlSerializer {
 		return root;
 	}
 
-	private void addXmlContent(XmlElement parent, Object value)
-			throws XmlException {
+	private void addXmlContent(XmlElement parent, Object value) throws XmlException {
 
 		if (value == null) {
 			return;
 		}
 
-		if ((value instanceof Number) || (value instanceof String)
-				|| (value instanceof Boolean)) {
+		if ((value instanceof Number) || (value instanceof String) || (value instanceof Boolean)) {
 			parent.addText(value.toString());
 
 		} else if (value instanceof Date) {
@@ -531,8 +623,7 @@ public class XmlSerializer {
 				parent.addChild(this.serialize(item));
 
 		} else if (value instanceof Map) {
-			throw new XmlException(
-					"The Map serialization is not yet implemented.");
+			throw new XmlException("The Map serialization is not yet implemented.");
 		} else if (value instanceof byte[]) {
 			parent.addText(Base64.encodeBase64String((byte[]) value));
 
@@ -570,8 +661,7 @@ public class XmlSerializer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Object> createCollection(Class<?> type)
-			throws InstantiationException, IllegalAccessException {
+	private Collection<Object> createCollection(Class<?> type) throws InstantiationException, IllegalAccessException {
 
 		Class<?> colMappedType = this.collectionMap.get(type);
 		if (colMappedType != null)
@@ -587,8 +677,7 @@ public class XmlSerializer {
 		if (this.generalTypeMapper.containsKey(simpleName))
 			return this.generalTypeMapper.get(simpleName);
 
-		List<String> packages = new ArrayList<String>(
-				this.classResolutionPackages);
+		List<String> packages = new ArrayList<String>(this.classResolutionPackages);
 		packages.add("java.lang");
 		packages.add("java.util");
 		packages.add("java.sql");
@@ -616,12 +705,8 @@ public class XmlSerializer {
 			}
 		}
 		throw new ClassNotFoundException(
-				"Unable to instanciate the given type "
-						+ simpleName
-						+ " with the internal packageSearchOrder "
-						+ this.classResolutionPackages
-						+ ". Please add the correct package for the type "
-						+ simpleName
+				"Unable to instanciate the given type " + simpleName + " with the internal packageSearchOrder "
+						+ this.classResolutionPackages + ". Please add the correct package for the type " + simpleName
 						+ " using XmlSerializer.getPackageSearchOrder().add(\"{package_name}\")");
 	}
 }

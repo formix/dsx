@@ -20,6 +20,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Tells that the given property should be serialized as an attribute to the
+ * parent element.
+ * 
+ * @author jpgravel
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface XmlAttribute {

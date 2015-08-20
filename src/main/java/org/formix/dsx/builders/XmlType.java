@@ -23,13 +23,13 @@ import java.lang.annotation.Target;
 /**
  * 
  * Tells the XmlBuilder to add the contained object type as an attribute to the
- * corresponding Xmlelement. This attribute shall be set on all undefined
+ * corresponding XmlElement. This attribute shall be set on all undefined
  * references (Abstract classes, interfaces and Object class references).
  * 
  * 
- * *** delete this annotation and add the XmlBuilder following behavior: if the
+ * *** TODO: deprecate this annotation and add the following XmlBuilder behavior: if the
  * method return type is different than the returned type, add the type
- * information to the method element ***
+ * information to the corresponding property element ***
  * 
  * @author jpgravel
  *
