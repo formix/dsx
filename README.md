@@ -10,3 +10,18 @@ class also offer XPath like methods to fetch information from the
 underlying XML tree.
 
 Consult the complete api documentation [here](http://formix.github.io/dsx/).
+
+# Installation
+
+*dsx* can be easily installed as a maven dependency:
+
+```xml
+	<dependencies>
+		<dependency>
+			<groupId>org.formix</groupId>
+			<artifactId>dsx</artifactId>
+			<version>0.10.0</version>
+		</dependency>
+		[...]
+	</dependencies>
+```
