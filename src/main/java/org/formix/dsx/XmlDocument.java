@@ -52,17 +52,17 @@ public class XmlDocument extends XmlNavigator implements XmlBloc {
 	 * 
 	 * @return a map between a child XmlContent's id and a parent XmlElement.
 	 */
-	public static Map<Long, XmlElement> createParentMap(XmlElement root) {
-		Map<Long, XmlElement> map = new HashMap<Long, XmlElement>();
-		map.put(root.getId(), null);
+	public static Map<XmlContent, XmlElement> createParentMap(XmlElement root) {
+		Map<XmlContent, XmlElement> map = new HashMap<XmlContent, XmlElement>();
+		map.put(root, null);
 		createParentMapRecursive(map, root);
 		return map;
 	}
 
-	private static void createParentMapRecursive(Map<Long, XmlElement> map,
+	private static void createParentMapRecursive(Map<XmlContent, XmlElement> map,
 			XmlElement parent) {
 		for (XmlContent child : parent.getChilds()) {
-			map.put(child.getId(), parent);
+			map.put(child, parent);
 			if (child instanceof XmlElement) {
 				XmlElement elem = (XmlElement) child;
 				createParentMapRecursive(map, elem);
@@ -419,7 +419,7 @@ public class XmlDocument extends XmlNavigator implements XmlBloc {
 	 * 
 	 * @return a map between a child XmlContent's id and a parent XmlElement.
 	 */
-	public Map<Long, XmlElement> createParentMap() {
+	public Map<XmlContent, XmlElement> createParentMap() {
 		return createParentMap(this.getRoot());
 	}
 }

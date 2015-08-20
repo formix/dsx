@@ -73,7 +73,12 @@ public class XmlText implements XmlContent {
 		if (!(o instanceof XmlText))
 			return false;
 		XmlText other = (XmlText) o;
-		return this.text.toString().equals(other.text.toString());
+		return this.id == other.id && this.toString().equals(other.toString());
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getClass().getName().hashCode() ^ Long.hashCode(this.getId());
 	}
 
 }

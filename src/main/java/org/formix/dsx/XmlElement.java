@@ -328,6 +328,8 @@ public class XmlElement implements XmlContent {
 
 		return true;
 	}
+	
+	
 
 	/**
 	 * Two XmlElements are equals if they have the same name, the same number of
@@ -362,6 +364,12 @@ public class XmlElement implements XmlContent {
 		}
 
 		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		return XmlElement.class.getName().hashCode() ^ 
+				Long.hashCode(this.id);
 	}
 
 	/**
