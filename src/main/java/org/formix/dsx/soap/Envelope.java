@@ -12,7 +12,7 @@ public class Envelope<T extends Object> {
 	private Body<T> body;
 	
 	public Envelope() {
-		this.header = new Header();
+		this.header = new Header() {};
 		this.body = null;
 	}
 
