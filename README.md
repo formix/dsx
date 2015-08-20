@@ -13,7 +13,7 @@ Consult the complete api documentation [here](http://formix.github.io/dsx/).
 
 # Installation
 
-*dsx* can be easily installed as a maven dependency:
+Maven dependency:
 
 ```xml
 <dependencies>
