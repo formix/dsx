@@ -8,3 +8,5 @@ Microsoft. Along with the basic soap package provided, it becomes
 easy to do raw SOAP calls to any SOAP Web service. The XmlDocument 
 class also offer XPath like methods to fetch information from the 
 underlying XML tree.
+
+Consult the complete api documentation [here](http://formix.github.io/dsx/).
