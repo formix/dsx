@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.formix</groupId>
 	<artifactId>dsx</artifactId>
-	<version>0.9.4</version>
+	<version>0.10.0</version>
 	<packaging>jar</packaging>
 
 	<name>Damn Simple XML</name>
@@ -12,7 +12,10 @@
 		Java XML Standard API. It contains a serializer compatible with 
 		Microsoft XmlSerializer input/output XML format. It contains another 
 		serializer that is compatible with the DataContractSerializer from 
-		Microsoft. It aslo offer an XPath like class that ease  
+		Microsoft. Along with the basic soap package provided, it becomes 
+		easy to do raw SOAP calls to any SOAP Web service. The XmlDocument 
+		class also offer XPath like methods to fetch information from the 
+		underlying XML tree.   
 	</description>
 	<url>http://formix.org</url>
 	<scm>
