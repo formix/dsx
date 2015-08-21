@@ -17,11 +17,11 @@
 		class also offer XPath like methods to fetch information from the 
 		underlying XML tree.	
 	</description>
-	
+
 	<url>http://formix.github.io/dsx/</url>
 	<scm>
-		<connection>scn:git:https://github.com/formix/dsx.git</connection>
-		<developerConnection>scn:git:https://github.com/formix/dsx.git</developerConnection>
+		<connection>scm:git:https://github.com/formix/dsx.git</connection>
+		<developerConnection>scm:git:https://github.com/formix/dsx.git</developerConnection>
 		<url>https://github.com/formix/dsx.git</url>
 	</scm>
 
@@ -164,6 +164,13 @@
 				<configuration>
 					<passphraseServerId>${gpg.keyname}</passphraseServerId>
 					<keyname>${gpg.keyname}</keyname>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.4</version>
+				<configuration>
+					<locales>en</locales>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -50,12 +50,12 @@ public interface Entity {
 	public void delete();
 
 	/**
-	 * Changes the state of the current object from:<br/>
-	 * <br/>
-	 * NEW, UPDATED to UNCHANGED;<br/>
-	 * DELETED to DEAD;<br/>
-	 * UNCHANGED to UNCHANGED (no change).<br/>
-	 * <br/>
+	 * Changes the state of the current object from:<br>
+	 * <br>
+	 * NEW, UPDATED to UNCHANGED;<br>
+	 * DELETED to DEAD;<br>
+	 * UNCHANGED to UNCHANGED (no change).<br>
+	 * <br>
 	 * Remark: It's the implementor responsibility to insure that an auto
 	 * incremented surrogate key is set to an unreachable value when changing
 	 * the state from DELETED to NEW. Zero or any negative values are suitable
